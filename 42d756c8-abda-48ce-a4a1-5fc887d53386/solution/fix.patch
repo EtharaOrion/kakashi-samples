@@ -1,0 +1,50 @@
+diff --git a/pkg/types/alpine/apk.go b/pkg/types/alpine/apk.go
+--- a/pkg/types/alpine/apk.go
++++ b/pkg/types/alpine/apk.go
+@@ -106,9 +106,8 @@ func (p *Package) Unmarshal(pkgReader io
+ 	// GZIP headers/footers are left unmodified; Tar footers are removed on first two archives
+ 	// signature.tar.gz | control.tar.gz | data.tar.gz
+ 	sigBuf := bytes.Buffer{}
+-	// #nosec G110
+-	if _, err := io.Copy(&sigBuf, gzipReader); err != nil {
+-		return errors.Wrap(err, "reading signature.tar.gz")
++	if err := readBoundedMember(&sigBuf, gzipReader, "signature.tar.gz"); err != nil {
++		return err
+ 	}
+ 
+ 	// the SHA1 sum used in the signature is over the entire file control.tar.gz so we need to
+@@ -124,9 +123,8 @@ func (p *Package) Unmarshal(pkgReader io
+ 	gzipReader.Multistream(false)
+ 
+ 	controlTar := bytes.Buffer{}
+-	// #nosec G110
+-	if _, err = io.Copy(&controlTar, gzipReader); err != nil {
+-		return errors.Wrap(err, "reading control.tar.gz")
++	if err := readBoundedMember(&controlTar, gzipReader, "control.tar.gz"); err != nil {
++		return err
+ 	}
+ 
+ 	// signature uses sha1 digest hardcoded in abuild-sign tool
+@@ -237,3 +235,22 @@ func parsePkginfo(input []byte) (map[str
+ 	// .PKGINFO does not use sections, so using "" grabs the default values
+ 	return cfg.Section("").KeysHash(), nil
+ }
++
++// maxAPKMetadataSize caps how many decompressed bytes of a package's metadata
++// members are buffered in memory while parsing.
++const maxAPKMetadataSize = 20 * 1024 * 1024
++
++// readBoundedMember copies one decompressed gzip member into buf, turning down
++// any member whose decompressed size runs past maxAPKMetadataSize. It reads one
++// byte past the ceiling so an oversized member is told apart from a member that
++// happens to sit exactly on it.
++func readBoundedMember(buf *bytes.Buffer, r io.Reader, member string) error {
++	if _, err := io.Copy(buf, io.LimitReader(r, maxAPKMetadataSize+1)); err != nil {
++		return errors.Wrap(err, "reading "+member)
++	}
++	if buf.Len() > maxAPKMetadataSize {
++		return fmt.Errorf("decompressed size (%d) for %s exceeds max allowed size %d",
++			buf.Len(), member, maxAPKMetadataSize)
++	}
++	return nil
++}

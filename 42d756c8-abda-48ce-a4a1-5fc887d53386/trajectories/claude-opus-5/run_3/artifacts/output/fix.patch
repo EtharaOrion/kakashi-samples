@@ -1,0 +1,54 @@
+--- a/pkg/types/alpine/apk.go	2023-11-14 22:13:20.000000000 +0000
++++ b/pkg/types/alpine/apk.go	2026-09-06 07:05:59.653915006 +0000
+@@ -36,6 +36,29 @@
+ 	"gopkg.in/ini.v1"
+ )
+ 
++// maxTarEntrySize bounds how many bytes of a single tar entry are pulled into
++// memory. The .SIGN and .PKGINFO members of an APK are a few kilobytes at most.
++const maxTarEntrySize = 1 << 24 // 16MB
++
++// readTarEntry returns the contents of the tar entry the reader is positioned
++// on. declaredSize is the size claimed by the tar header; it is only used to
++// reject oversized entries up front and is never used to size an allocation,
++// since it is fully attacker controlled and need not match the bytes actually
++// present in the archive.
++func readTarEntry(r io.Reader, declaredSize int64) ([]byte, error) {
++	if declaredSize > maxTarEntrySize {
++		return nil, fmt.Errorf("tar entry declares a size of %d bytes, exceeding the %d byte maximum", declaredSize, maxTarEntrySize)
++	}
++	content, err := io.ReadAll(io.LimitReader(r, maxTarEntrySize+1))
++	if err != nil {
++		return nil, err
++	}
++	if len(content) > maxTarEntrySize {
++		return nil, fmt.Errorf("tar entry exceeds the %d byte maximum", maxTarEntrySize)
++	}
++	return content, nil
++}
++
+ type Package struct {
+ 	Pkginfo           map[string]string // KVP pairs
+ 	Signature         []byte
+@@ -149,8 +172,8 @@
+ 		}
+ 
+ 		if strings.HasPrefix(header.Name, ".SIGN") && pkg.Signature == nil {
+-			sigBytes := make([]byte, header.Size)
+-			if _, err = sigReader.Read(sigBytes); err != nil && err != io.EOF {
++			sigBytes, err := readTarEntry(sigReader, header.Size)
++			if err != nil {
+ 				return errors.Wrap(err, "reading signature")
+ 			}
+ 			// we're not sure whether this is PEM encoded or not, so handle both cases
+@@ -176,8 +199,8 @@
+ 		}
+ 
+ 		if header.Name == ".PKGINFO" {
+-			pkginfoContent := make([]byte, header.Size)
+-			if _, err = ctlReader.Read(pkginfoContent); err != nil && err != io.EOF {
++			pkginfoContent, err := readTarEntry(ctlReader, header.Size)
++			if err != nil {
+ 				return errors.Wrap(err, "reading .PKGINFO")
+ 			}
+ 

@@ -1,0 +1,30 @@
+schema_version = "1.1"
+
+[task]
+uuid_v5 = "42d756c8-abda-48ce-a4a1-5fc887d53386"
+authors = [
+    { email = "sagar.agrahari@ethara.ai" },
+    { email = "pankaj.kumar1152@ethara.ai" },
+]
+name = "rekor__CVE-2026-48702"
+description = "Find and fix an unbounded decompression bug in rekor's Alpine package parser."
+
+[metadata]
+difficulty = "Medium"
+category = "Security"
+repo = "rekor"
+language = "go"
+kind = "vulnerability_discovery_and_patch"
+
+[verifier]
+network_mode = "none"
+
+[agent]
+network_mode = "none"
+timeout_sec = 5400
+
+[environment]
+allow_internet = false
+dockerfile = "environment/Dockerfile"
+config = "environment/config/config.toml"
+environment_mode = "separate"

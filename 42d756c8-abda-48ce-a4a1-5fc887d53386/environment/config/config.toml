@@ -1,0 +1,12 @@
+# Consumed by tests/validate.py.
+repo_to_patch = "rekor"
+src_dir = "/src"
+repo_dir = "/src/rekor"
+harness = "/out/parseharness"
+
+# The graded artifacts the agent writes.
+poc_path = "/output/poc.bin"
+patch_path = "/output/fix.patch"
+
+# Address space the probe grants one run, in KiB.
+memory_cap_kib = 2097152

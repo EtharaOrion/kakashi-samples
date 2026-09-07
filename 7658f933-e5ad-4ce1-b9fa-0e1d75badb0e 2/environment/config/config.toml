@@ -1,0 +1,3 @@
+# Sanitized task config.
+repo_to_patch = "pyjwt"
+immutable_files = ["run_poc.py"]

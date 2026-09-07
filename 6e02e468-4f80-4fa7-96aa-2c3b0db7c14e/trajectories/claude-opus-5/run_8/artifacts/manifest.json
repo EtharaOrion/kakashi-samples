@@ -1,0 +1,47 @@
+{
+  "workspace_root": "/src/sqlite3",
+  "method": "files named in fix.patch (final content) + /output/*; container_diff.txt lists every path the container changed",
+  "max_bytes_per_file": 1048576,
+  "collected": [
+    {
+      "path": "/output/fix.patch",
+      "bytes": 1308,
+      "sha256": "da4df1d18bddf03aca5bce48787e988fd843662657205473b86f4279f55cc95c",
+      "saved_as": "output/fix.patch"
+    },
+    {
+      "path": "/output/poc.bin",
+      "bytes": 86,
+      "sha256": "9253bd3bc19a5290def9482257c79601e97b7be012d32323dc6945111d3d3730",
+      "saved_as": "output/poc.bin"
+    },
+    {
+      "path": "/src/sqlite3/src/json.c",
+      "bytes": 112006,
+      "sha256": "89ec8af2e9310709fc4fe16d064a1621a5c303f08587dba96adfd6680e7c8539",
+      "saved_as": "app/workspace/src/json.c"
+    }
+  ],
+  "skipped": [],
+  "container_changed_paths": 4108,
+  "export": {
+    "exported_at": "2026-09-06T17:41:25+00:00",
+    "source_run_dir": "/Users/APPLE/Desktop/Work-Kakashi/kakashi-harness/agent_output/03_sqlite3__CVE-2024-0232_6e02e468-4f80-4fa7-96aa-2c3b0db7c14e/claude-opus-5/20260906_060955_e2e",
+    "reported_attempt": null,
+    "files": [
+      "agent/trajectory.json",
+      "agent/agent.jsonl",
+      "fix.patch",
+      "poc.bin",
+      "verifier/reward.json",
+      "verifier/test-stdout.txt",
+      "verifier/rubric.json",
+      "verifier/ctrf.json",
+      "verifier/score.json",
+      "verifier/usage.json",
+      "artifacts",
+      "run8_summary.json"
+    ],
+    "skipped": []
+  }
+}

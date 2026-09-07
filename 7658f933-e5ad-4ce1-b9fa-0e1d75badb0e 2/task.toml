@@ -1,0 +1,34 @@
+schema_version = "1.1"
+mode = "e2e"
+artifacts = ["/output/poc.bin", "/output/fix.patch"]
+
+[task]
+uuid_v5 = "7658f933-e5ad-4ce1-b9fa-0e1d75badb0e"
+authors = [
+    { email = "sagar.agrahari@ethara.ai" },
+    { email = "umang.kumar@ethara.ai" },
+]
+name = "pyjwt__CVE-2026-32597"
+description = "Discover, reproduce and repair PyJWT accepting a token naming an unsupported critical header extension (CVE-2026-32597)."
+keywords = ["security", "python", "authentication", "input-validation"]
+
+[metadata]
+difficulty = "Expert"
+category = "Security"
+subcategory = "Vulnerability repair"
+family = "real-binary-reproducer"
+tags = ["cve", "e2e", "python", "improper-authentication", "rfc-7515", "pyjwt"]
+
+[verifier]
+network_mode = "none"
+timeout_sec = 900.0
+environment_mode = "same"
+
+[agent]
+network_mode = "none"
+timeout_sec = 3600.0
+
+[environment]
+build_timeout_sec = 900.0
+allow_internet = false
+mcp_servers = []

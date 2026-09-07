@@ -1,0 +1,132 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1760" height="532" viewBox="0 0 1760 532" role="img" aria-label="Kakashi: end-to-end vulnerability discovery, reproduction and repair">
+  <title>Kakashi</title>
+  <desc>An editorial banner. On the left, the KAKASHI wordmark in serif capitals above a rule and a monospace subtitle reading DISCOVER, REPRODUCE, REPAIR. On the right, 24 faint traces converge from the left into a gold faceted seal ringed in teal; 6 scored traces leave it toward the lower right, one for each rollout whose patch also stopped a held-out reproducer. A rollout scale runs along the bottom right.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#050c0c"/>
+      <stop offset="55%" stop-color="#0a1e1c"/>
+      <stop offset="100%" stop-color="#071313"/>
+    </linearGradient>
+    <radialGradient id="vignette" cx="68%" cy="45%" r="75%">
+      <stop offset="0%" stop-color="#0d2624" stop-opacity="0"/>
+      <stop offset="70%" stop-color="#020707" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#010404" stop-opacity="0.55"/>
+    </radialGradient>
+    <radialGradient id="seal" cx="42%" cy="34%" r="78%">
+      <stop offset="0%" stop-color="#f7e2ab"/>
+      <stop offset="45%" stop-color="#d8a24e"/>
+      <stop offset="100%" stop-color="#8a5715"/>
+    </radialGradient>
+    <radialGradient id="sealGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#35d0ba" stop-opacity="0.32"/>
+      <stop offset="100%" stop-color="#35d0ba" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="grain" x="0%" y="0%" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch"/>
+      <feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.65 0"/>
+    </filter>
+    <clipPath id="frame">
+      <rect x="0" y="0" width="1760" height="532"/>
+    </clipPath>
+  </defs>
+  <g clip-path="url(#frame)">
+    <rect x="0" y="0" width="1760" height="532" fill="url(#bg)"/>
+    <rect x="0" y="0" width="1760" height="532" fill="url(#vignette)"/>
+    <ellipse cx="1360" cy="250" rx="345" ry="300" fill="none" stroke="#35d0ba" stroke-opacity="0.10" stroke-dasharray="2 12" stroke-width="1.2" transform="rotate(-8 1360 250)"/>
+    <g fill="none" stroke="#35d0ba">
+      <circle cx="1338" cy="258" r="214" stroke-opacity="0.10" stroke-width="1.1" stroke-dasharray="3 9"/>
+      <circle cx="1338" cy="258" r="192" stroke-opacity="0.15" stroke-width="1.1" stroke-dasharray="3 9"/>
+      <circle cx="1338" cy="258" r="170" stroke-opacity="0.20" stroke-width="1.1" stroke-dasharray="3 9"/>
+      <circle cx="1338" cy="258" r="148" stroke-opacity="0.25" stroke-width="1.1" stroke-dasharray="3 9"/>
+    </g>
+    <g fill="none">
+      <path d="M 867 82 C 1045 82, 1135 235, 1210 235" stroke="#8fe3d4" stroke-opacity="0.15" stroke-width="1.4"/>
+      <path d="M 876 98 C 1055 98, 1145 237, 1210 237" stroke="#8fe3d4" stroke-opacity="0.17" stroke-width="1.4" stroke-dasharray="1 8"/>
+      <circle cx="1075" cy="151" r="3.2" fill="#8fe3d4" fill-opacity="0.5"/>
+      <path d="M 884 114 C 1064 114, 1154 239, 1210 239" stroke="#8fe3d4" stroke-opacity="0.19" stroke-width="1.4"/>
+      <path d="M 888 130 C 1072 130, 1162 241, 1210 241" stroke="#8fe3d4" stroke-opacity="0.21" stroke-width="1.4" stroke-dasharray="1 8"/>
+      <path d="M 888 146 C 1077 146, 1167 243, 1210 243" stroke="#8fe3d4" stroke-opacity="0.23" stroke-width="1.4"/>
+      <path d="M 884 162 C 1080 162, 1170 246, 1210 246" stroke="#8fe3d4" stroke-opacity="0.25" stroke-width="1.4" stroke-dasharray="1 8"/>
+      <circle cx="1100" cy="194" r="3.2" fill="#8fe3d4" fill-opacity="0.5"/>
+      <path d="M 876 178 C 1080 178, 1170 248, 1210 248" stroke="#8fe3d4" stroke-opacity="0.26" stroke-width="1.4"/>
+      <path d="M 867 194 C 1077 194, 1167 250, 1210 250" stroke="#8fe3d4" stroke-opacity="0.27" stroke-width="1.4" stroke-dasharray="1 8"/>
+      <path d="M 857 210 C 1072 210, 1162 252, 1210 252" stroke="#8fe3d4" stroke-opacity="0.28" stroke-width="1.4"/>
+      <path d="M 848 226 C 1064 226, 1154 254, 1210 254" stroke="#8fe3d4" stroke-opacity="0.29" stroke-width="1.4" stroke-dasharray="1 8"/>
+      <circle cx="1084" cy="237" r="3.2" fill="#8fe3d4" fill-opacity="0.5"/>
+      <path d="M 840 242 C 1055 242, 1145 256, 1210 256" stroke="#8fe3d4" stroke-opacity="0.30" stroke-width="1.4"/>
+      <path d="M 836 258 C 1045 258, 1135 258, 1210 258" stroke="#8fe3d4" stroke-opacity="0.30" stroke-width="1.4" stroke-dasharray="1 8"/>
+      <path d="M 836 274 C 1035 274, 1125 260, 1210 260" stroke="#8fe3d4" stroke-opacity="0.30" stroke-width="1.4"/>
+      <path d="M 840 290 C 1025 290, 1115 262, 1210 262" stroke="#8fe3d4" stroke-opacity="0.30" stroke-width="1.4" stroke-dasharray="1 8"/>
+      <circle cx="1045" cy="279" r="3.2" fill="#8fe3d4" fill-opacity="0.5"/>
+      <path d="M 848 306 C 1016 306, 1106 264, 1210 264" stroke="#8fe3d4" stroke-opacity="0.29" stroke-width="1.4"/>
+      <path d="M 857 322 C 1008 322, 1098 266, 1210 266" stroke="#8fe3d4" stroke-opacity="0.28" stroke-width="1.4" stroke-dasharray="1 8"/>
+      <path d="M 867 338 C 1003 338, 1093 268, 1210 268" stroke="#8fe3d4" stroke-opacity="0.27" stroke-width="1.4"/>
+      <path d="M 876 354 C 1000 354, 1090 270, 1210 270" stroke="#8fe3d4" stroke-opacity="0.26" stroke-width="1.4" stroke-dasharray="1 8"/>
+      <circle cx="1020" cy="322" r="3.2" fill="#8fe3d4" fill-opacity="0.5"/>
+      <path d="M 884 370 C 1000 370, 1090 273, 1210 273" stroke="#8fe3d4" stroke-opacity="0.25" stroke-width="1.4"/>
+      <path d="M 888 386 C 1003 386, 1093 275, 1210 275" stroke="#8fe3d4" stroke-opacity="0.23" stroke-width="1.4" stroke-dasharray="1 8"/>
+      <path d="M 888 402 C 1008 402, 1098 277, 1210 277" stroke="#8fe3d4" stroke-opacity="0.21" stroke-width="1.4"/>
+      <path d="M 884 418 C 1016 418, 1106 279, 1210 279" stroke="#8fe3d4" stroke-opacity="0.19" stroke-width="1.4" stroke-dasharray="1 8"/>
+      <circle cx="1036" cy="365" r="3.2" fill="#8fe3d4" fill-opacity="0.5"/>
+      <path d="M 876 434 C 1025 434, 1115 281, 1210 281" stroke="#8fe3d4" stroke-opacity="0.17" stroke-width="1.4"/>
+      <path d="M 867 450 C 1035 450, 1125 283, 1210 283" stroke="#8fe3d4" stroke-opacity="0.15" stroke-width="1.4" stroke-dasharray="1 8"/>
+    </g>
+    <g transform="translate(1338,258)">
+      <circle cx="0" cy="0" r="150" fill="url(#sealGlow)"/>
+      <ellipse cx="0" cy="0" rx="120" ry="126" fill="none" stroke="#35d0ba" stroke-opacity="0.35" stroke-width="1.3"/>
+      <g transform="rotate(6)">
+        <polygon points="0,-96 83,-48 83,48 0,96 -83,48 -83,-48" fill="url(#seal)" stroke="#2c1a06" stroke-opacity="0.45" stroke-width="1.6"/>
+        <path d="M 0,0 L 0,-96" stroke="#2c1a06" stroke-opacity="0.22" stroke-width="1.4"/>
+        <path d="M 0,0 L 83,-48" stroke="#2c1a06" stroke-opacity="0.22" stroke-width="1.4"/>
+        <path d="M 0,0 L 83,48" stroke="#2c1a06" stroke-opacity="0.22" stroke-width="1.4"/>
+        <path d="M 0,0 L 0,96" stroke="#2c1a06" stroke-opacity="0.22" stroke-width="1.4"/>
+        <path d="M 0,0 L -83,48" stroke="#2c1a06" stroke-opacity="0.22" stroke-width="1.4"/>
+        <path d="M 0,0 L -83,-48" stroke="#2c1a06" stroke-opacity="0.22" stroke-width="1.4"/>
+        <polygon points="0,-53 46,-26 46,26 0,53 -46,26 -46,-26" fill="none" stroke="#2c1a06" stroke-opacity="0.30" stroke-width="1.6"/>
+        <polygon points="0,-53 46,-26 46,26 0,53 -46,26 -46,-26" fill="none" stroke="#fdf3df" stroke-opacity="0.16" stroke-width="1"/>
+      </g>
+    </g>
+    <g fill="none">
+      <path d="M 1394 324 C 1456 364, 1484 298, 1600 308" stroke="#e2ac52" stroke-opacity="0.49" stroke-width="1.6"/>
+      <circle cx="1600" cy="308" r="4" fill="#e2ac52" fill-opacity="0.8"/>
+      <circle cx="1600" cy="308" r="9" fill="none" stroke="#e2ac52" stroke-opacity="0.4" stroke-width="1.3"/>
+      <path d="M 1394 324 C 1456 366, 1491 324, 1607 334" stroke="#e2ac52" stroke-opacity="0.46" stroke-width="1.6"/>
+      <circle cx="1607" cy="334" r="4" fill="#e2ac52" fill-opacity="0.8"/>
+      <circle cx="1607" cy="334" r="9" fill="none" stroke="#e2ac52" stroke-opacity="0.4" stroke-width="1.3"/>
+      <path d="M 1394 324 C 1456 370, 1498 348, 1614 358" stroke="#e2ac52" stroke-opacity="0.43" stroke-width="1.6"/>
+      <circle cx="1614" cy="358" r="4" fill="#e2ac52" fill-opacity="0.8"/>
+      <circle cx="1614" cy="358" r="9" fill="none" stroke="#e2ac52" stroke-opacity="0.4" stroke-width="1.3"/>
+      <path d="M 1394 324 C 1456 372, 1506 374, 1622 384" stroke="#e2ac52" stroke-opacity="0.41" stroke-width="1.6"/>
+      <circle cx="1622" cy="384" r="4" fill="#e2ac52" fill-opacity="0.8"/>
+      <circle cx="1622" cy="384" r="9" fill="none" stroke="#e2ac52" stroke-opacity="0.4" stroke-width="1.3"/>
+      <path d="M 1394 324 C 1456 376, 1513 398, 1629 408" stroke="#e2ac52" stroke-opacity="0.38" stroke-width="1.6"/>
+      <circle cx="1629" cy="408" r="4" fill="#e2ac52" fill-opacity="0.8"/>
+      <circle cx="1629" cy="408" r="9" fill="none" stroke="#e2ac52" stroke-opacity="0.4" stroke-width="1.3"/>
+      <path d="M 1394 324 C 1456 378, 1520 424, 1636 434" stroke="#e2ac52" stroke-opacity="0.35" stroke-width="1.6"/>
+      <circle cx="1636" cy="434" r="4" fill="#e2ac52" fill-opacity="0.8"/>
+      <circle cx="1636" cy="434" r="9" fill="none" stroke="#e2ac52" stroke-opacity="0.4" stroke-width="1.3"/>
+    </g>
+    <g font-family="Georgia, 'Iowan Old Style', 'Times New Roman', ui-serif, serif">
+      <text x="112" y="268" font-size="150" letter-spacing="5" fill="#f2f4ee">KAKASHI</text>
+    </g>
+    <line x1="115" y1="300" x2="742" y2="300" stroke="#35d0ba" stroke-opacity="0.4" stroke-width="1.5"/>
+    <text x="114" y="336" font-family="'JetBrains Mono','SF Mono','Berkeley Mono',ui-monospace,'Courier New',monospace" font-size="27" letter-spacing="5.5" fill="#35d0ba" fill-opacity="0.92">DISCOVER · REPRODUCE · REPAIR</text>
+    <text x="116" y="392" font-family="'JetBrains Mono','SF Mono','Berkeley Mono',ui-monospace,'Courier New',monospace" font-size="20" fill="#9fc4bc" fill-opacity="0.82">3 real CVEs · go · c · python · 24 graded rollouts</text>
+    <text x="116" y="424" font-family="Georgia, 'Iowan Old Style', 'Times New Roman', ui-serif, serif" font-size="21" fill="#9fc4bc" fill-opacity="0.6">the agent writes both the reproducer and the patch</text>
+    <g transform="translate(1140,472)" font-family="'JetBrains Mono','SF Mono','Berkeley Mono',ui-monospace,'Courier New',monospace" font-size="15" fill="#9fc4bc" fill-opacity="0.75">
+      <line x1="0" y1="0" x2="500" y2="0" stroke="#9fc4bc" stroke-opacity="0.3" stroke-width="1.2"/>
+      <line x1="0" y1="-6" x2="0" y2="0" stroke="#9fc4bc" stroke-opacity="0.5" stroke-width="1.2"/>
+      <text x="0" y="20" text-anchor="middle">0</text>
+      <line x1="125" y1="-6" x2="125" y2="0" stroke="#9fc4bc" stroke-opacity="0.5" stroke-width="1.2"/>
+      <text x="125" y="20" text-anchor="middle">6</text>
+      <line x1="250" y1="-6" x2="250" y2="0" stroke="#9fc4bc" stroke-opacity="0.5" stroke-width="1.2"/>
+      <text x="250" y="20" text-anchor="middle">12</text>
+      <line x1="375" y1="-6" x2="375" y2="0" stroke="#9fc4bc" stroke-opacity="0.5" stroke-width="1.2"/>
+      <text x="375" y="20" text-anchor="middle">18</text>
+      <line x1="500" y1="-6" x2="500" y2="0" stroke="#9fc4bc" stroke-opacity="0.5" stroke-width="1.2"/>
+      <text x="500" y="20" text-anchor="middle">24</text>
+      <text x="250" y="42" text-anchor="middle" fill-opacity="0.55" letter-spacing="3">ROLLOUTS</text>
+    </g>
+    <rect x="0" y="0" width="1760" height="532" filter="url(#grain)" opacity="0.05" style="mix-blend-mode:overlay"/>
+  </g>
+</svg>

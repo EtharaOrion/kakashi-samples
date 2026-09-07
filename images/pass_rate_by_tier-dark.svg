@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" role="img" aria-label="Mean reward per task, ordered by declared tier. reward_mean over 8 runs, read from each bundle's pass_summary.json">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#050c0c"/>
+      <stop offset="60%" stop-color="#0a1e1c"/>
+      <stop offset="100%" stop-color="#071313"/>
+    </linearGradient>
+    <pattern id="hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="8" height="8" fill="#e2ac52"/>
+      <line x1="0" y1="0" x2="0" y2="8" stroke="rgba(5,12,12,0.55)" stroke-width="3"/>
+    </pattern>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="6"/>
+    </filter>
+  </defs>
+  <rect width="1600" height="900" fill="url(#bg)"/>
+
+  <text x="130" y="72" font-family="Georgia, 'Iowan Old Style', 'Times New Roman', ui-serif, serif" font-size="40" font-weight="bold" fill="#eef2ea">Mean reward per task, ordered by declared tier</text>
+  <text x="130" y="108" font-family="'JetBrains Mono','SF Mono','Berkeley Mono',ui-monospace,'Courier New',monospace" font-size="19" fill="#9fc4bc">reward_mean over 8 runs, read from each bundle's pass_summary.json</text>
+  <line x1="130" y1="690.0" x2="1540" y2="690.0" stroke="rgba(190,225,218,0.12)" stroke-width="1"/>
+  <text x="114" y="697.0" text-anchor="end" font-family="'JetBrains Mono','SF Mono','Berkeley Mono',ui-monospace,'Courier New',monospace" font-size="18" fill="#9fc4bc">0%</text>
+  <line x1="130" y1="570.0" x2="1540" y2="570.0" stroke="rgba(190,225,218,0.12)" stroke-width="1"/>
+  <text x="114" y="577.0" text-anchor="end" font-family="'JetBrains Mono','SF Mono','Berkeley Mono',ui-monospace,'Courier New',monospace" font-size="18" fill="#9fc4bc">15%</text>
+  <line x1="130" y1="450.0" x2="1540" y2="450.0" stroke="rgba(190,225,218,0.12)" stroke-width="1"/>
+  <text x="114" y="457.0" text-anchor="end" font-family="'JetBrains Mono','SF Mono','Berkeley Mono',ui-monospace,'Courier New',monospace" font-size="18" fill="#9fc4bc">30%</text>
+  <line x1="130" y1="330.0" x2="1540" y2="330.0" stroke="rgba(190,225,218,0.12)" stroke-width="1"/>
+  <text x="114" y="337.0" text-anchor="end" font-family="'JetBrains Mono','SF Mono','Berkeley Mono',ui-monospace,'Courier New',monospace" font-size="18" fill="#9fc4bc">45%</text>
+  <line x1="130" y1="210.0" x2="1540" y2="210.0" stroke="rgba(190,225,218,0.12)" stroke-width="1"/>
+  <text x="114" y="217.0" text-anchor="end" font-family="'JetBrains Mono','SF Mono','Berkeley Mono',ui-monospace,'Courier New',monospace" font-size="18" fill="#9fc4bc">60%</text>
+  <line x1="130" y1="690.0" x2="1540" y2="690.0" stroke="rgba(190,225,218,0.38)" stroke-width="2"/>
+  <line x1="365.0" y1="210" x2="365.0" y2="690" stroke="rgba(190,225,218,0.12)" stroke-width="1" stroke-dasharray="4 8"/>
+  <line x1="835.0" y1="210" x2="835.0" y2="690" stroke="rgba(190,225,218,0.12)" stroke-width="1" stroke-dasharray="4 8"/>
+  <line x1="1305.0" y1="210" x2="1305.0" y2="690" stroke="rgba(190,225,218,0.12)" stroke-width="1" stroke-dasharray="4 8"/>
+  <polyline points="365.0,386.7 835.0,313.1 1305.0,615.6" fill="none" stroke="#35d0ba" stroke-width="4"/>
+  <circle cx="365.0" cy="386.7" r="9" fill="#35d0ba" opacity="0.28" filter="url(#glow)"/>
+  <circle cx="365.0" cy="386.7" r="8" fill="#35d0ba" stroke="#0f2723" stroke-width="3"/>
+  <text x="365.0" y="360.7" text-anchor="middle" font-family="'JetBrains Mono','SF Mono','Berkeley Mono',ui-monospace,'Courier New',monospace" font-size="23" font-weight="bold" fill="#35d0ba">37.91%</text>
+  <text x="365.0" y="736" text-anchor="middle" font-family="'JetBrains Mono','SF Mono','Berkeley Mono',ui-monospace,'Courier New',monospace" font-size="20" font-weight="bold" fill="#eef2ea">42d756c8-abda-48ce-a4a1-5fc887d53386</text>
+  <text x="365.0" y="768" text-anchor="middle" font-family="'JetBrains Mono','SF Mono','Berkeley Mono',ui-monospace,'Courier New',monospace" font-size="17" fill="#9fc4bc">CVE-2026-48702</text>
+  <text x="365.0" y="796" text-anchor="middle" font-family="'JetBrains Mono','SF Mono','Berkeley Mono',ui-monospace,'Courier New',monospace" font-size="17" fill="#9fc4bc">medium · go</text>
+  <text x="365.0" y="824" text-anchor="middle" font-family="'JetBrains Mono','SF Mono','Berkeley Mono',ui-monospace,'Courier New',monospace" font-size="17" fill="#9fc4bc">2/8 passed</text>
+  <circle cx="835.0" cy="313.1" r="9" fill="#35d0ba" opacity="0.28" filter="url(#glow)"/>
+  <circle cx="835.0" cy="313.1" r="8" fill="#35d0ba" stroke="#0f2723" stroke-width="3"/>
+  <text x="835.0" y="287.1" text-anchor="middle" font-family="'JetBrains Mono','SF Mono','Berkeley Mono',ui-monospace,'Courier New',monospace" font-size="23" font-weight="bold" fill="#35d0ba">47.11%</text>
+  <text x="835.0" y="736" text-anchor="middle" font-family="'JetBrains Mono','SF Mono','Berkeley Mono',ui-monospace,'Courier New',monospace" font-size="20" font-weight="bold" fill="#eef2ea">6e02e468-4f80-4fa7-96aa-2c3b0db7c14e</text>
+  <text x="835.0" y="768" text-anchor="middle" font-family="'JetBrains Mono','SF Mono','Berkeley Mono',ui-monospace,'Courier New',monospace" font-size="17" fill="#9fc4bc">CVE-2024-0232</text>
+  <text x="835.0" y="796" text-anchor="middle" font-family="'JetBrains Mono','SF Mono','Berkeley Mono',ui-monospace,'Courier New',monospace" font-size="17" fill="#9fc4bc">medium · c</text>
+  <text x="835.0" y="824" text-anchor="middle" font-family="'JetBrains Mono','SF Mono','Berkeley Mono',ui-monospace,'Courier New',monospace" font-size="17" fill="#9fc4bc">4/8 passed</text>
+  <circle cx="1305.0" cy="615.6" r="9" fill="#35d0ba" opacity="0.28" filter="url(#glow)"/>
+  <circle cx="1305.0" cy="615.6" r="8" fill="#35d0ba" stroke="#0f2723" stroke-width="3"/>
+  <text x="1305.0" y="589.6" text-anchor="middle" font-family="'JetBrains Mono','SF Mono','Berkeley Mono',ui-monospace,'Courier New',monospace" font-size="23" font-weight="bold" fill="#35d0ba">9.30%</text>
+  <text x="1305.0" y="736" text-anchor="middle" font-family="'JetBrains Mono','SF Mono','Berkeley Mono',ui-monospace,'Courier New',monospace" font-size="20" font-weight="bold" fill="#eef2ea">7658f933-e5ad-4ce1-b9fa-0e1d75badb0e</text>
+  <text x="1305.0" y="768" text-anchor="middle" font-family="'JetBrains Mono','SF Mono','Berkeley Mono',ui-monospace,'Courier New',monospace" font-size="17" fill="#9fc4bc">CVE-2026-32597</text>
+  <text x="1305.0" y="796" text-anchor="middle" font-family="'JetBrains Mono','SF Mono','Berkeley Mono',ui-monospace,'Courier New',monospace" font-size="17" fill="#9fc4bc">expert · python</text>
+  <text x="1305.0" y="824" text-anchor="middle" font-family="'JetBrains Mono','SF Mono','Berkeley Mono',ui-monospace,'Courier New',monospace" font-size="17" fill="#9fc4bc">0/8 passed</text>
+  <text x="130" y="876" font-family="'JetBrains Mono','SF Mono','Berkeley Mono',ui-monospace,'Courier New',monospace" font-size="16" fill="#9fc4bc">every point is one bundle's own reward_mean; nothing is averaged across bundles</text>
+</svg>

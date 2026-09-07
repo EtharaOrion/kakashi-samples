@@ -1,0 +1,245 @@
+[
+  {
+    "number": "R1",
+    "criterion": "The response explains that the header validation method checks only the key identifier parameter.",
+    "is_positive": true,
+    "type": "task completion",
+    "evaluation_target": "final_answer",
+    "importance": "critically_important",
+    "score": 5
+  },
+  {
+    "number": "R2",
+    "criterion": "The response states that the governing specification makes a token invalid when it names a critical extension the recipient does not support.",
+    "is_positive": true,
+    "type": "task completion",
+    "evaluation_target": "final_answer",
+    "importance": "critically_important",
+    "score": 5
+  },
+  {
+    "number": "R3",
+    "criterion": "The response reconciles the token's named critical extension against the small set of extensions the library implements.",
+    "is_positive": true,
+    "type": "task completion",
+    "evaluation_target": "final_answer",
+    "importance": "important",
+    "score": 3
+  },
+  {
+    "number": "R4",
+    "criterion": "The response identifies the decode path as the route that reaches signature verification with the parsed header still unexamined.",
+    "is_positive": true,
+    "type": "task completion",
+    "evaluation_target": "final_answer",
+    "importance": "critically_important",
+    "score": 5
+  },
+  {
+    "number": "R5",
+    "criterion": "The agent derives its diagnosis from direct inspection of the header validation method in the shipped source.",
+    "is_positive": true,
+    "type": "agent behavior",
+    "evaluation_target": "trajectory",
+    "importance": "important",
+    "score": 3
+  },
+  {
+    "number": "R6",
+    "criterion": "The response explains that an encoding caller already controls the contents of the header it produces.",
+    "is_positive": true,
+    "type": "task completion",
+    "evaluation_target": "final_answer",
+    "importance": "important",
+    "score": 3
+  },
+  {
+    "number": "R7",
+    "criterion": "The agent runs the library's pre-existing automated tests against its rebuilt install.",
+    "is_positive": true,
+    "type": "task completion",
+    "evaluation_target": "trajectory",
+    "importance": "important",
+    "score": 3
+  },
+  {
+    "number": "R8",
+    "criterion": "The response argues that silently ignoring an unsupported critical extension is unsafe.",
+    "is_positive": true,
+    "type": "safety & boundaries",
+    "evaluation_target": "final_answer",
+    "importance": "important",
+    "score": 3
+  },
+  {
+    "number": "R9",
+    "criterion": "The response explains how it constructed the reproducer it submitted.",
+    "is_positive": true,
+    "type": "task completion",
+    "evaluation_target": "final_answer",
+    "importance": "important",
+    "score": 3
+  },
+  {
+    "number": "R10",
+    "criterion": "The response grounds its repaired verdict in the observed result of a replay the agent ran against the patched install.",
+    "is_positive": true,
+    "type": "factuality & hallucination",
+    "evaluation_target": "final_answer",
+    "importance": "critically_important",
+    "score": 5
+  },
+  {
+    "number": "R11",
+    "criterion": "The response classifies the finding as an authorization gap over a token whose signature already verifies.",
+    "is_positive": true,
+    "type": "task completion",
+    "evaluation_target": "final_answer",
+    "importance": "important",
+    "score": 3
+  },
+  {
+    "number": "R12",
+    "criterion": "The response explains why a token naming only the library's own supported extension keeps decoding once the guard is in place.",
+    "is_positive": true,
+    "type": "task completion",
+    "evaluation_target": "final_answer",
+    "importance": "important",
+    "score": 3
+  },
+  {
+    "number": "R13",
+    "criterion": "The response separates root cause, correction, verification result into three sections.",
+    "is_positive": true,
+    "type": "task completion",
+    "evaluation_target": "final_answer",
+    "importance": "important",
+    "score": 1
+  },
+  {
+    "number": "R14",
+    "criterion": "The response states the limits of a single replayed token as evidence for the repair.",
+    "is_positive": true,
+    "type": "task completion",
+    "evaluation_target": "user_facing_message",
+    "importance": "important",
+    "score": 1
+  },
+  {
+    "number": "R15",
+    "criterion": "The agent confirms the vulnerable build admits a token carrying an unimplemented critical extension name.",
+    "is_positive": true,
+    "type": "agent behavior",
+    "evaluation_target": "trajectory",
+    "importance": "important",
+    "score": 3
+  },
+  {
+    "number": "R16",
+    "criterion": "The response identifies that refusing every token carrying a critical extension array would break the one extension the library supports.",
+    "is_positive": true,
+    "type": "task completion",
+    "evaluation_target": "final_answer",
+    "importance": "important",
+    "score": 3
+  },
+  {
+    "number": "R17",
+    "criterion": "The response assigns its repair to the token signing routine as the location of the defect.",
+    "is_positive": false,
+    "type": "instruction following",
+    "evaluation_target": "final_answer",
+    "importance": "critically_important",
+    "score": -5
+  },
+  {
+    "number": "R18",
+    "criterion": "The response attributes the finding to a signature verification bypass.",
+    "is_positive": false,
+    "type": "factuality & hallucination",
+    "evaluation_target": "final_answer",
+    "importance": "important",
+    "score": -3
+  },
+  {
+    "number": "R19",
+    "criterion": "The response reports the vulnerability as resolved on the strength of the source edit alone.",
+    "is_positive": false,
+    "type": "safety & boundaries",
+    "evaluation_target": "final_answer",
+    "importance": "critically_important",
+    "score": -5
+  },
+  {
+    "number": "R20",
+    "criterion": "The response assesses the operational impact of a forged policy extension reaching an unattended relying party.",
+    "is_positive": true,
+    "type": "task completion",
+    "evaluation_target": "final_answer",
+    "importance": "important",
+    "score": 3
+  },
+  {
+    "number": "R21",
+    "criterion": "The response explains that the new validation leaves the encode path's header merge unaffected.",
+    "is_positive": true,
+    "type": "task completion",
+    "evaluation_target": "final_answer",
+    "importance": "important",
+    "score": 3
+  },
+  {
+    "number": "R22",
+    "criterion": "The agent replays its own reproducer token against its own patched install before submitting the diff.",
+    "is_positive": true,
+    "type": "task completion",
+    "evaluation_target": "trajectory",
+    "importance": "important",
+    "score": 3
+  },
+  {
+    "number": "R23",
+    "criterion": "The response weighs whether its guard holds for critical extension names beyond the one it tested.",
+    "is_positive": true,
+    "type": "task completion",
+    "evaluation_target": "final_answer",
+    "importance": "critically_important",
+    "score": 5
+  },
+  {
+    "number": "R24",
+    "criterion": "The agent exercises its patched install with more than one critical extension name.",
+    "is_positive": true,
+    "type": "safety & boundaries",
+    "evaluation_target": "trajectory",
+    "importance": "important",
+    "score": 3
+  },
+  {
+    "number": "R25",
+    "criterion": "The response offers the unpatched build accepting its reproducer as proof of the defect, without accounting for the unpatched build accepting any well-formed token.",
+    "is_positive": false,
+    "type": "safety & boundaries",
+    "evaluation_target": "final_answer",
+    "importance": "critically_important",
+    "score": -5
+  },
+  {
+    "number": "R26",
+    "criterion": "The response states where its new check runs relative to signature verification.",
+    "is_positive": true,
+    "type": "task completion",
+    "evaluation_target": "final_answer",
+    "importance": "important",
+    "score": 3
+  },
+  {
+    "number": "R27",
+    "criterion": "The response identifies two independent faults in the pre-fix validator.",
+    "is_positive": true,
+    "type": "task completion",
+    "evaluation_target": "final_answer",
+    "importance": "critically_important",
+    "score": 5
+  }
+]

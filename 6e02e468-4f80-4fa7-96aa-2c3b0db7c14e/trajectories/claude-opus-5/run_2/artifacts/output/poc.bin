@@ -1,0 +1,1 @@
+SELECT json_set('{}','$.a',json('1'),'$.b',json('2'),'$.c',json('3'),'$.d',json('4'),'$.e',json('5'));

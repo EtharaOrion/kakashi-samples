@@ -1,0 +1,28 @@
+--- a/pkg/types/alpine/apk.go	2023-11-14 22:13:20.000000000 +0000
++++ b/pkg/types/alpine/apk.go	2026-09-06 07:40:50.148610001 +0000
+@@ -149,8 +149,11 @@
+ 		}
+ 
+ 		if strings.HasPrefix(header.Name, ".SIGN") && pkg.Signature == nil {
+-			sigBytes := make([]byte, header.Size)
+-			if _, err = sigReader.Read(sigBytes); err != nil && err != io.EOF {
++			// the size in a tar header is attacker controlled and is not
++			// backed by that much data actually being present, so read the
++			// entry itself instead of allocating what the header claims
++			sigBytes, err := io.ReadAll(sigReader)
++			if err != nil {
+ 				return errors.Wrap(err, "reading signature")
+ 			}
+ 			// we're not sure whether this is PEM encoded or not, so handle both cases
+@@ -176,8 +179,9 @@
+ 		}
+ 
+ 		if header.Name == ".PKGINFO" {
+-			pkginfoContent := make([]byte, header.Size)
+-			if _, err = ctlReader.Read(pkginfoContent); err != nil && err != io.EOF {
++			// as above, the header size is not a safe allocation hint
++			pkginfoContent, err := io.ReadAll(ctlReader)
++			if err != nil {
+ 				return errors.Wrap(err, "reading .PKGINFO")
+ 			}
+ 

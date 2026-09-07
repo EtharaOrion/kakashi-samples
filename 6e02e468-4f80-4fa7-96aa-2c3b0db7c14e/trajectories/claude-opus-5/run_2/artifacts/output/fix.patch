@@ -1,0 +1,42 @@
+diff -ru '--exclude=.git' /tmp/tmp.pWAIQt0IAX/sqlite3/src/json.c /src/sqlite3/src/json.c
+--- a/src/json.c
++++ b/src/json.c
+@@ -2900,6 +2900,10 @@
+   }
+   pParse = jsonParseCached(ctx, argv[0], ctx, argc>1);
+   if( pParse==0 ) return;
++  /* jsonReplaceNode() below may invoke jsonParseCached() recursively, which
++  ** can evict pParse from the parse cache and thereby delete it.  Hold our
++  ** own reference to pParse to prevent that. */
++  pParse->nJPRef++;
+   for(i=1; i<(u32)argc; i+=2){
+     zPath = (const char*)sqlite3_value_text(argv[i]);
+     pParse->useMod = 1;
+@@ -2912,6 +2916,7 @@
+   jsonReturnJson(pParse, pParse->aNode, ctx, 1);
+ replace_err:
+   jsonDebugPrintParse(pParse);
++  jsonParseFree(pParse);
+ }
+ 
+ 
+@@ -2946,6 +2951,10 @@
+   }
+   pParse = jsonParseCached(ctx, argv[0], ctx, argc>1);
+   if( pParse==0 ) return;
++  /* jsonReplaceNode() below may invoke jsonParseCached() recursively, which
++  ** can evict pParse from the parse cache and thereby delete it.  Hold our
++  ** own reference to pParse to prevent that. */
++  pParse->nJPRef++;
+   for(i=1; i<(u32)argc; i+=2){
+     zPath = (const char*)sqlite3_value_text(argv[i]);
+     bApnd = 0;
+@@ -2964,7 +2973,7 @@
+   jsonReturnJson(pParse, pParse->aNode, ctx, 1);
+ 
+ jsonSetDone:
+-  /* no cleanup required */;
++  jsonParseFree(pParse);
+ }
+ 
+ /*

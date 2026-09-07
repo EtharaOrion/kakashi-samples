@@ -1,0 +1,10 @@
+repo_to_patch = "sqlite3"
+# The fuzz harness, named as it appears in the tree. Only paths that exist in
+# this snapshot are listed: an entry matching nothing protects nothing.
+#
+# The build and regression scripts are deliberately absent from this list
+# because they are absent from the tree -- they live under /opt/harness/scripts,
+# so a diff of the repository cannot reach them. Their bytes are pinned by
+# digest in the oracle instead, which detects an edit rather than declaring it
+# out of bounds.
+immutable_files = ["test/ossfuzz.c"]

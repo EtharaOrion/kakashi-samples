@@ -1,0 +1,48 @@
+{
+  "reward": 0.13369,
+  "pytest_score": 0.176471,
+  "rubric_score": 0.090909,
+  "avg_score": 0.13369,
+  "judge_available": true,
+  "scoring": "pytest_and_rubric_mean",
+  "skip_reason": null,
+  "stages_detail": {
+    "stage1": {
+      "status": "passed"
+    },
+    "stage2": {
+      "status": "passed"
+    },
+    "stage3": {
+      "status": "passed"
+    },
+    "stage4": {
+      "status": "failed"
+    }
+  },
+  "binary_stages": {
+    "stage1": true,
+    "stage2": true,
+    "stage3": true,
+    "stage4": false
+  },
+  "required_stages": [
+    "stage1",
+    "stage2",
+    "stage3",
+    "stage4"
+  ],
+  "skipped": false,
+  "pre_gate": {
+    "reward": 0.267379,
+    "pytest_score": 0.352941,
+    "avg_score": 0.267379
+  },
+  "raw_reward": 0.352941,
+  "stage4_gate": {
+    "applied": true,
+    "stage4": "failed",
+    "rule": "stage4 failed -> reward x0.5 (both channels); deterministic channel no longer zeroed",
+    "rescored_from": "recorded trajectory; agent run not repeated"
+  }
+}

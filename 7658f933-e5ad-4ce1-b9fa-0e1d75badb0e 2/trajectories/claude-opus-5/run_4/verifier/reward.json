@@ -1,0 +1,36 @@
+{
+  "reward": 0.185606,
+  "pytest_score": -0.083333,
+  "rubric_score": 0.454545,
+  "avg_score": 0.185606,
+  "judge_available": true,
+  "scoring": "pytest_and_rubric_mean",
+  "skip_reason": null,
+  "stages_detail": {
+    "stage1": {
+      "status": "failed"
+    },
+    "stage2": {
+      "status": "passed"
+    },
+    "stage3": {
+      "status": "passed"
+    },
+    "stage4": {
+      "status": "failed"
+    }
+  },
+  "binary_stages": {
+    "stage1": false,
+    "stage2": true,
+    "stage3": true,
+    "stage4": false
+  },
+  "required_stages": [
+    "stage1",
+    "stage2",
+    "stage3",
+    "stage4"
+  ],
+  "skipped": false
+}

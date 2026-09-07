@@ -1,0 +1,47 @@
+{
+  "workspace_root": "/src/pyjwt",
+  "method": "files named in fix.patch (final content) + /output/*; container_diff.txt lists every path the container changed",
+  "max_bytes_per_file": 1048576,
+  "collected": [
+    {
+      "path": "/output/fix.patch",
+      "bytes": 935,
+      "sha256": "5fc522afad05561ec9d173d85cd01ed0927b5542e6eef4266a5f69f676eaa712",
+      "saved_as": "output/fix.patch"
+    },
+    {
+      "path": "/output/poc.bin",
+      "bytes": 120,
+      "sha256": "abb84fbf1591c7ed2937acf36da5b2ac98efeec479cdfd77509da736efda0a95",
+      "saved_as": "output/poc.bin"
+    },
+    {
+      "path": "/src/pyjwt/jwt/api_jwt.py",
+      "bytes": 21975,
+      "sha256": "fe9f4ab152a6fedde8016a204d46ebf9b4d7e4a317571049c2335eb1fdb6aa0c",
+      "saved_as": "app/workspace/jwt/api_jwt.py"
+    }
+  ],
+  "skipped": [],
+  "container_changed_paths": 153,
+  "export": {
+    "exported_at": "2026-09-06T18:15:26+00:00",
+    "source_run_dir": "/Users/apple/Desktop/Traj_Kakashi/agent_output/CVE-2026-32597_7658f933-e5ad-4ce1-b9fa-0e1d75badb0e/claude-opus-5/20260906_233123_e2e",
+    "reported_attempt": null,
+    "files": [
+      "agent/trajectory.json",
+      "agent/agent.jsonl",
+      "fix.patch",
+      "poc.bin",
+      "verifier/reward.json",
+      "verifier/test-stdout.txt",
+      "verifier/rubric.json",
+      "verifier/ctrf.json",
+      "verifier/score.json",
+      "verifier/usage.json",
+      "artifacts",
+      "run8_summary.json"
+    ],
+    "skipped": []
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "osv_id": "CVE-2026-48702",
+  "project": "rekor",
+  "repo_url": "https://github.com/sigstore/rekor",
+  "summary": "Rekor has an OOM Condition due to Unbounded gzip Decompression in Alpine APK Parsing Logic",
+  "references": [],
+  "published": null,
+  "modified": "2026-08-15T11:31:01.428431519Z",
+  "status": "ready",
+  "vulnerable_commit": "e4303a87b92081e162e080ff69f36830c1035c09",
+  "fixed_commit": "759b98e2a7c39ea9779b6a51299c5f0f987f8802",
+  "src_tgz": "environment/src.tgz",
+  "fix_patch": "solution/fix.patch",
+  "patch_looks_noisy": false
+}

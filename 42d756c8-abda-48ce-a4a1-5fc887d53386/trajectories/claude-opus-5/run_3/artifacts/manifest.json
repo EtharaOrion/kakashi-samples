@@ -1,0 +1,47 @@
+{
+  "workspace_root": "/src/rekor",
+  "method": "files named in fix.patch (final content) + /output/*; container_diff.txt lists every path the container changed",
+  "max_bytes_per_file": 1048576,
+  "collected": [
+    {
+      "path": "/output/fix.patch",
+      "bytes": 2084,
+      "sha256": "f382d1a31ef6c16326a7d7f349c8f9d333fb2cee2bdefca7eee30e606a15ac6f",
+      "saved_as": "output/fix.patch"
+    },
+    {
+      "path": "/output/poc.bin",
+      "bytes": 170,
+      "sha256": "3d3c25e5ea980440742977826ac6e815574169c09cdda18315323614174c7e0f",
+      "saved_as": "output/poc.bin"
+    },
+    {
+      "path": "/src/rekor/pkg/types/alpine/apk.go",
+      "bytes": 7772,
+      "sha256": "97b71747a4494197c4a8c877caadb04ab8bb0704dfe2a87621baa9e1dd93d351",
+      "saved_as": "app/workspace/pkg/types/alpine/apk.go"
+    }
+  ],
+  "skipped": [],
+  "container_changed_paths": 399,
+  "export": {
+    "exported_at": "2026-09-06T07:13:42+00:00",
+    "source_run_dir": "/Users/mac/etharaProjects/traj-kakashi/agent_output/CVE-2026-48702/claude-opus-5/20260906_123232_e2e",
+    "reported_attempt": null,
+    "files": [
+      "agent/trajectory.json",
+      "agent/agent.jsonl",
+      "fix.patch",
+      "poc.bin",
+      "verifier/reward.json",
+      "verifier/test-stdout.txt",
+      "verifier/rubric.json",
+      "verifier/ctrf.json",
+      "verifier/score.json",
+      "verifier/usage.json",
+      "artifacts",
+      "run3_summary.json"
+    ],
+    "skipped": []
+  }
+}

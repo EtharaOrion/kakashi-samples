@@ -1,0 +1,52 @@
+{
+  "schema": "cybergym-e2e-usage-v1",
+  "agent": {
+    "model": "claude-opus-5",
+    "provider": "anthropic",
+    "uncached_input_tokens": 130,
+    "cache_read_input_tokens": 6876149,
+    "cache_creation_input_tokens": 162147,
+    "cache_accounting": "provider_reported",
+    "prompt_tokens": 7038426,
+    "completion_tokens": 51205,
+    "thinking_tokens": null,
+    "cost_usd": 3.439361,
+    "cost_source": "cli_result_event",
+    "cost_known": true,
+    "num_turns": 67,
+    "duration_ms": 1371539,
+    "steps": 66,
+    "model_usage": {
+      "claude-opus-5": {
+        "inputTokens": 130,
+        "outputTokens": 51205,
+        "cacheReadInputTokens": 6876149,
+        "cacheCreationInputTokens": 162147,
+        "costUSD": 3.43936095,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000
+      }
+    }
+  },
+  "judge": {
+    "provider": "codex",
+    "model": "gpt-5.6-sol",
+    "trials": 3,
+    "input_tokens": 241939,
+    "output_tokens": 23077,
+    "cache_read_input_tokens": 0,
+    "cache_creation_input_tokens": 0,
+    "cost_usd": 0.533194,
+    "cost_known": true
+  },
+  "calibration": {
+    "input_tokens": 540,
+    "output_tokens": 1245,
+    "cache_read_input_tokens": 69376,
+    "cache_creation_input_tokens": 0,
+    "cost_usd": null,
+    "cost_known": null
+  },
+  "total_cost_usd": 3.972555,
+  "cost_known": true
+}

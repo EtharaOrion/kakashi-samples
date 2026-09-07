@@ -1,0 +1,59 @@
+{
+  "workspace_root": "/src/pyjwt",
+  "method": "files named in fix.patch (final content) + /output/*; container_diff.txt lists every path the container changed",
+  "max_bytes_per_file": 1048576,
+  "collected": [
+    {
+      "path": "/output/fix.patch",
+      "bytes": 3977,
+      "sha256": "3506be92262323e6d933e6ce3668553f8f19d6c3fd119bbce96b6ce6f2c87c82",
+      "saved_as": "output/fix.patch"
+    },
+    {
+      "path": "/output/poc.bin",
+      "bytes": 98,
+      "sha256": "e2d6c3c5b2c1ff0343cdd23b17d29b2851b8cac4b8e2a85707d432486afc0fc6",
+      "saved_as": "output/poc.bin"
+    },
+    {
+      "path": "/src/pyjwt/jwt/api_jws.py",
+      "bytes": 13628,
+      "sha256": "4aa2c0f11d662db364b9253b2f04d08f9f45b16537b91527341a05385bd055ce",
+      "saved_as": "app/workspace/jwt/api_jws.py"
+    },
+    {
+      "path": "/src/pyjwt/jwt/api_jwt.py",
+      "bytes": 21975,
+      "sha256": "2f36ebbf40ff675ecc9dfca23a1c897f4b82759643dc129bc8d69470d85843b8",
+      "saved_as": "app/workspace/jwt/api_jwt.py"
+    },
+    {
+      "path": "/src/pyjwt/jwt/utils.py",
+      "bytes": 4109,
+      "sha256": "5953d14427c513787e1702ae6e59cd365f33443852f20df6ec112f495a743a40",
+      "saved_as": "app/workspace/jwt/utils.py"
+    }
+  ],
+  "skipped": [],
+  "container_changed_paths": 154,
+  "export": {
+    "exported_at": "2026-09-06T14:28:55+00:00",
+    "source_run_dir": "/Users/apple/Desktop/Traj_Kakashi/agent_output/CVE-2026-32597_7658f933-e5ad-4ce1-b9fa-0e1d75badb0e/claude-opus-5/20260906_192516_e2e",
+    "reported_attempt": null,
+    "files": [
+      "agent/trajectory.json",
+      "agent/agent.jsonl",
+      "fix.patch",
+      "poc.bin",
+      "verifier/reward.json",
+      "verifier/test-stdout.txt",
+      "verifier/rubric.json",
+      "verifier/ctrf.json",
+      "verifier/score.json",
+      "verifier/usage.json",
+      "artifacts",
+      "run4_summary.json"
+    ],
+    "skipped": []
+  }
+}

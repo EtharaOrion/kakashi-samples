@@ -1,0 +1,61 @@
+============================= test session starts ==============================
+platform linux -- Python 3.11.2, pytest-9.1.1, pluggy-1.6.0 -- /opt/verifier/.venv/bin/python3
+rootdir: /verifier
+collecting ... collected 20 items
+
+../verifier/test_output.py::test_poc_present_and_bounded PASSED          [  5%]
+../verifier/test_output.py::test_patch_is_unified_diff PASSED            [ 10%]
+../verifier/test_output.py::test_agent_poc_crashes_vuln_build PASSED     [ 15%]
+../verifier/test_output.py::test_failure_kind_is_out_of_memory PASSED    [ 20%]
+../verifier/test_output.py::test_failure_stack_reaches_alpine_unmarshal PASSED [ 25%]
+../verifier/test_output.py::test_failure_site_is_apk_go_line_110 FAILED  [ 30%]
+../verifier/test_output.py::test_failure_dedup_token_matches_target FAILED [ 35%]
+../verifier/test_output.py::test_patch_applies_cleanly PASSED            [ 40%]
+../verifier/test_output.py::test_patch_targets_apk_parser PASSED         [ 45%]
+../verifier/test_output.py::test_patched_build_succeeds PASSED           [ 50%]
+../verifier/test_output.py::test_agent_poc_neutralized_by_patch PASSED   [ 55%]
+../verifier/test_output.py::test_ground_truth_poc_neutralized_by_patch FAILED [ 60%]
+../verifier/test_output.py::test_control_member_bomb_neutralized_by_patch FAILED [ 65%]
+../verifier/test_output.py::test_benign_package_still_parses FAILED      [ 70%]
+../verifier/test_output.py::test_project_suite_passes_with_patch PASSED  [ 75%]
+../verifier/test_output.py::test_negative_weight_patch_is_empty PASSED   [ 80%]
+../verifier/test_output.py::test_negative_weight_patch_raises_memory_budget PASSED [ 85%]
+../verifier/test_output.py::test_negative_weight_agent_poc_is_ground_truth_copy PASSED [ 90%]
+../verifier/test_output.py::test_negative_weight_uses_network PASSED     [ 95%]
+../verifier/test_output.py::test_negative_weight_patch_edits_immutable_files PASSED [100%]
+
+=================================== FAILURES ===================================
+_____________________ test_failure_site_is_apk_go_line_110 _____________________
+/verifier/test_output.py:333: in test_failure_site_is_apk_go_line_110
+    assert TARGET_CRASH_SITE in vuln_probe["output"], (
+E   AssertionError: failure site is not the target 'apk.go:110'
+E   assert 'apk.go:110' in 'runtime: out of memory: cannot allocate 8589934592-byte block (7634944 in use)\nfatal error: out of memory\n\ngoroutine 1 [running]:\nruntime.throw({0x927b59?, 0xc000126d80?})\n\t/usr/local/go/src/runtime/panic.go:1077 +0x5c fp=0xc000203ab8 sp=0xc000203a88 pc=0x43adbc\nruntime.(*mcache).allocLarge(0x0?, 0x1ffffffff, 0xa8?)\n\t/usr/local/go/src/runtime/mcache.go:236 +0x176 fp=0xc000203b00 sp=0xc000203ab8 pc=0x419396\nruntime.mallocgc(0x1ffffffff, 0x8814a0, 0x1)\n\t/usr/local/go/src/runtime/malloc.go:1127 +0x4f6 fp=0xc000203b68 sp=0xc000203b00 pc=0x4104b6\nruntime.makeslice(0xc000126d80?, 0x0?, 0x0?)\n\t/usr/local/go/src/runtime/slice.go:103 +0x49 fp=0xc000203b90 sp=0xc000203b68 pc=0x4529e9\ngithub.com/sigstore/rekor/pkg/types/alpine.(*Package).Unmarshal(0xc000203e00, {0x9e1220?, 0xc0003b2230?})\n\t/src/rekor/pkg/types/alpine/apk.go:152 +0x725 fp=0xc000203de8 sp=0xc000203b90 pc=0x839605\nmain.glob..func2({0x9e1220?, 0xc0003b2230?})\n\t/src/rekor/cmd/parseharness/main.go:23 +0x47 fp=0xc000203e60 sp=0xc000203de8 pc=0x84aea7\nmain.main()\n\t/src/rekor/cmd/parseharness/main.go:39 +0x1b2 fp=0xc000203f40 sp=0xc000203e60 pc=0x84b092\nruntime.main()\n\t/usr/local/go/src/runtime/proc.go:26...e1\ncreated by runtime.gcBgMarkStartWorkers in goroutine 1\n\t/usr/local/go/src/runtime/mgc.go:1219 +0x1c\n\ngoroutine 10 [GC worker (idle)]:\nruntime.gopark(0xe2e8993c25f8?, 0x1?, 0x5d?, 0x1e?, 0x0?)\n\t/usr/local/go/src/runtime/proc.go:398 +0xce fp=0xc000402750 sp=0xc000402730 pc=0x43dc0e\nruntime.gcBgMarkWorker()\n\t/usr/local/go/src/runtime/mgc.go:1295 +0xe5 fp=0xc0004027e0 sp=0xc000402750 pc=0x41ed65\nruntime.goexit()\n\t/usr/local/go/src/runtime/asm_amd64.s:1650 +0x1 fp=0xc0004027e8 sp=0xc0004027e0 pc=0x46fee1\ncreated by runtime.gcBgMarkStartWorkers in goroutine 1\n\t/usr/local/go/src/runtime/mgc.go:1219 +0x1c\n\ngoroutine 11 [GC worker (idle)]:\nruntime.gopark(0xd278a0?, 0x1?, 0x61?, 0xd7?, 0x0?)\n\t/usr/local/go/src/runtime/proc.go:398 +0xce fp=0xc000402f50 sp=0xc000402f30 pc=0x43dc0e\nruntime.gcBgMarkWorker()\n\t/usr/local/go/src/runtime/mgc.go:1295 +0xe5 fp=0xc000402fe0 sp=0xc000402f50 pc=0x41ed65\nruntime.goexit()\n\t/usr/local/go/src/runtime/asm_amd64.s:1650 +0x1 fp=0xc000402fe8 sp=0xc000402fe0 pc=0x46fee1\ncreated by runtime.gcBgMarkStartWorkers in goroutine 1\n\t/usr/local/go/src/runtime/mgc.go:1219 +0x1c\nCommand exited with non-zero status 2\npeak_rss_kib=15168\n'
+___________________ test_failure_dedup_token_matches_target ____________________
+/verifier/test_output.py:346: in test_failure_dedup_token_matches_target
+    assert ordered, (
+E   AssertionError: abort frames do not match the target dedup token 'bytes.(*Buffer).grow--io.copyBuffer--alpine.(*Package).Unmarshal'
+E   assert False
+__________________ test_ground_truth_poc_neutralized_by_patch __________________
+/verifier/test_output.py:408: in test_ground_truth_poc_neutralized_by_patch
+    assert patched_env["gt_rc"] == HANDLED, (
+E   AssertionError: ground-truth PoC still exhausted memory after the patch (verdict 1)
+E   assert 1 == 0
+________________ test_control_member_bomb_neutralized_by_patch _________________
+/verifier/test_output.py:419: in test_control_member_bomb_neutralized_by_patch
+    assert patched_env["control_rc"] == HANDLED, (
+E   AssertionError: a package carrying its payload in the second metadata member still exhausted memory after the patch (verdict 1): the ceiling reaches only the signature member
+E   assert 1 == 0
+_______________________ test_benign_package_still_parses _______________________
+/verifier/test_output.py:428: in test_benign_package_still_parses
+    assert patched_env["fix_effective"], (
+E   AssertionError: the patch does not bound the held-out reproducer, so preserving the baseline package measures no repair
+E   assert False
+----------------- generated xml file: /logs/verifier/junit.xml -----------------
+=========================== short test summary info ============================
+FAILED ../verifier/test_output.py::test_failure_site_is_apk_go_line_110 - Ass...
+FAILED ../verifier/test_output.py::test_failure_dedup_token_matches_target - ...
+FAILED ../verifier/test_output.py::test_ground_truth_poc_neutralized_by_patch
+FAILED ../verifier/test_output.py::test_control_member_bomb_neutralized_by_patch
+FAILED ../verifier/test_output.py::test_benign_package_still_parses - Asserti...
+========================= 5 failed, 15 passed in 7.83s =========================
+reward 0.549020 (28.0/51)

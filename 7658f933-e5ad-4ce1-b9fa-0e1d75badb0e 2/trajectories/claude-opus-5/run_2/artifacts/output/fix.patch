@@ -1,0 +1,75 @@
+diff --git a/jwt/api_jws.py b/jwt/api_jws.py
+index 28da7a8..8276c4b 100644
+--- a/jwt/api_jws.py
++++ b/jwt/api_jws.py
+@@ -27,6 +27,46 @@ if TYPE_CHECKING:
+     from .algorithms import AllowedPrivateKeys, AllowedPublicKeys
+     from .types import SigOptions
+ 
++_BASE64_ALPHABET = frozenset(
++    b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_+/"
++)
++
++
++def _base64url_decode_strict(segment: bytes) -> bytes:
++    """Decode a single JWS segment, rejecting non-canonical base64 input.
++
++    ``base64.urlsafe_b64decode`` decodes leniently: it silently discards
++    characters outside the alphabet, tolerates surplus padding and ignores
++    the unused trailing bits of the final character. Several distinct
++    segment strings therefore decode to the same bytes. Applied to the
++    signature segment that is signature malleability -- a valid token can
++    be rewritten into a different token that still verifies -- and applied
++    to the header or payload it lets the signed bytes be presented in a
++    spelling the issuer never produced.
++    """
++    stripped = segment.rstrip(b"=")
++    padding = len(segment) - len(stripped)
++
++    if not _BASE64_ALPHABET.issuperset(stripped):
++        raise binascii.Error("Invalid base64 character")
++
++    # Padding must be either omitted entirely (as RFC 7515 requires) or
++    # exactly the amount that fills the final quantum -- never surplus.
++    if padding and padding != -len(stripped) % 4:
++        raise binascii.Error("Invalid base64 padding")
++
++    if len(stripped) % 4 == 1:
++        raise binascii.Error("Invalid base64 length")
++
++    data = base64url_decode(stripped)
++
++    # Re-encoding is the cheapest way to reject a final character whose
++    # unused low bits are not zero.
++    if base64url_encode(data) != stripped.translate(bytes.maketrans(b"+/", b"-_")):
++        raise binascii.Error("Non-canonical base64 encoding")
++
++    return data
++
+ 
+ class PyJWS:
+     header_typ = "JWT"
+@@ -296,7 +336,7 @@ class PyJWS:
+             raise DecodeError("Not enough segments") from err
+ 
+         try:
+-            header_data = base64url_decode(header_segment)
++            header_data = _base64url_decode_strict(header_segment)
+         except (TypeError, binascii.Error) as err:
+             raise DecodeError("Invalid header padding") from err
+ 
+@@ -309,12 +349,12 @@ class PyJWS:
+             raise DecodeError("Invalid header string: must be a json object")
+ 
+         try:
+-            payload = base64url_decode(payload_segment)
++            payload = _base64url_decode_strict(payload_segment)
+         except (TypeError, binascii.Error) as err:
+             raise DecodeError("Invalid payload padding") from err
+ 
+         try:
+-            signature = base64url_decode(crypto_segment)
++            signature = _base64url_decode_strict(crypto_segment)
+         except (TypeError, binascii.Error) as err:
+             raise DecodeError("Invalid crypto padding") from err
+ 

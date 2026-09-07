@@ -1,0 +1,30 @@
+{
+  "reward": 0.758621,
+  "pytest_score": 0.517241,
+  "rubric_score": 1.0,
+  "avg_score": 0.758621,
+  "judge_available": true,
+  "scoring": "pytest_and_rubric_mean_stage4_penalised",
+  "skip_reason": null,
+  "reward_contract": "task.toml [verifier.weights] normalize=all_weights (positive_sum 30 + |negative_sum| 28 = 58), both channels; stage4 failed -> reward x0.75",
+  "stages_detail": {
+    "stage1": {
+      "status": "passed"
+    },
+    "stage2": {
+      "status": "passed"
+    },
+    "stage3": {
+      "status": "passed"
+    },
+    "stage4": {
+      "status": "passed"
+    }
+  },
+  "binary_stages": {
+    "stage1": true,
+    "stage2": true,
+    "stage3": true,
+    "stage4": true
+  }
+}

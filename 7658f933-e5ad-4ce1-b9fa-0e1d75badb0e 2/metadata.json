@@ -1,0 +1,30 @@
+{
+  "osv_id": "CVE-2026-32597",
+  "project": "pyjwt",
+  "repo_url": "https://github.com/jpadilla/pyjwt",
+  "summary": "PyJWT accepts unknown `crit` header extensions (RFC 7515 §4.1.11 MUST violation)",
+  "references": [],
+  "published": null,
+  "modified": "2026-08-19T03:31:09.290466393Z",
+  "status": "ready",
+  "vulnerable_commit": "1451d70eca2059bc472703692f0bb0777bc0fe93",
+  "fixed_commit": "051ea341b5573fe3edcd53042f347929b92c2b92",
+  "src_tgz": "tasks_all/pyjwt/CVE-2026-32597/src.tgz",
+  "fix_patch": "tasks_all/pyjwt/CVE-2026-32597/fix.patch",
+  "patch_looks_noisy": false,
+  "upstream_provenance": {
+    "origin": "derived",
+    "upstream_identity": "https://github.com/jpadilla/pyjwt",
+    "upstream_vcs": "git",
+    "upstream_vulnerable_commit": "1451d70eca2059bc472703692f0bb0777bc0fe93",
+    "upstream_fixed_commit": "051ea341b5573fe3edcd53042f347929b92c2b92",
+    "license": "MIT",
+    "modifications": [
+      "Repackaged the upstream source tree at the vulnerable commit as environment/src.tgz.",
+      "Added the Harbor task environment (Dockerfile, environment/scripts/, config/config.toml) that builds the image and drives grading.",
+      "Added the reproduction harness. Packaged as an end-to-end task: the image ships no reproducer and no crash transcript, since both named the crit header the defect lives in, and the agent must produce its own /output/poc.bin. The control and held-out reproducers the verifier replays are base64-embedded in tests/validate.py.",
+      "Initialized a pristine in-image git baseline so the agent's diff contains only its own edits."
+    ],
+    "train_cutoff": "2026-08-19T03:31:09.290466393Z"
+  }
+}

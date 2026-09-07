@@ -1,0 +1,46 @@
+diff -ru '--exclude=.git' /tmp/tmp.v0fu0Geke9/sqlite3/src/json.c /src/sqlite3/src/json.c
+--- a/src/json.c
++++ b/src/json.c
+@@ -2900,6 +2900,12 @@
+   }
+   pParse = jsonParseCached(ctx, argv[0], ctx, argc>1);
+   if( pParse==0 ) return;
++  /* Hold a reference to pParse for the duration of this call.  Each VALUE
++  ** argument that carries the JSON subtype causes jsonReplaceNode() to
++  ** re-enter jsonParseCached() on this same sqlite3_context, and enough of
++  ** those will evict pParse from the parse cache.  Without this reference the
++  ** eviction would free the object that is still in use here. */
++  pParse->nJPRef++;
+   for(i=1; i<(u32)argc; i+=2){
+     zPath = (const char*)sqlite3_value_text(argv[i]);
+     pParse->useMod = 1;
+@@ -2912,6 +2918,7 @@
+   jsonReturnJson(pParse, pParse->aNode, ctx, 1);
+ replace_err:
+   jsonDebugPrintParse(pParse);
++  jsonParseFree(pParse);
+ }
+ 
+ 
+@@ -2946,6 +2953,12 @@
+   }
+   pParse = jsonParseCached(ctx, argv[0], ctx, argc>1);
+   if( pParse==0 ) return;
++  /* Hold a reference to pParse for the duration of this call.  Each VALUE
++  ** argument that carries the JSON subtype causes jsonReplaceNode() to
++  ** re-enter jsonParseCached() on this same sqlite3_context, and enough of
++  ** those will evict pParse from the parse cache.  Without this reference the
++  ** eviction would free the object that is still in use here. */
++  pParse->nJPRef++;
+   for(i=1; i<(u32)argc; i+=2){
+     zPath = (const char*)sqlite3_value_text(argv[i]);
+     bApnd = 0;
+@@ -2964,7 +2977,7 @@
+   jsonReturnJson(pParse, pParse->aNode, ctx, 1);
+ 
+ jsonSetDone:
+-  /* no cleanup required */;
++  jsonParseFree(pParse);
+ }
+ 
+ /*

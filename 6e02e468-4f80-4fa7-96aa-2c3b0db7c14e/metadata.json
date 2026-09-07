@@ -1,0 +1,73 @@
+{
+  "osv_id": "CVE-2024-0232",
+  "project": "sqlite3",
+  "language": "C",
+  "cwe": "CWE-416",
+  "repo_url": "https://github.com/sqlite/sqlite",
+  "summary": "Sqlite: use-after-free bug in jsonparseaddnodearray",
+  "references": [
+    "https://nvd.nist.gov/vuln/detail/CVE-2024-0232",
+    "https://api.osv.dev/v1/vulns/CVE-2024-0232",
+    "https://access.redhat.com/security/cve/CVE-2024-0232",
+    "https://github.com/sqlite/sqlite/commit/3736d874229135abecb935d938346dee5429196a"
+  ],
+  "published": "2024-01-16T14:01:58.505Z",
+  "modified": "2026-08-12T03:51:22.125772718Z",
+  "status": "fuzz_target_verified",
+  "vulnerable_commit": "995f96f8e11036c909b1dec14049999bc23421c6",
+  "vulnerable_tag": "version-3.43.0",
+  "fixed_commit": "3736d874229135abecb935d938346dee5429196a",
+  "fossil_checkin": "0f80b798b3f4b81a7bb4233c58294edd0f1156f36b6ecf5ab8e83631d468778c",
+  "src_tgz": "environment/src.tgz",
+  "src_tgz_sha256": "8e54e566c91b6fea9cfb8a59be2040233e331de8464c65da8bfc0ce5f8e8f854",
+  "src_tgz_root": "sqlite3",
+  "fix_patch": "solution/fix.patch",
+  "patch_looks_noisy": false,
+  "held_out": true,
+  "note": "Held out from the image. The Dockerfile build context is environment/, so this file is never in the context and never COPYd; it exists so the QC can diff the shipped snapshot against upstream and derive commit-hash answer tokens.",
+  "cwe_ids": [
+    "CWE-416"
+  ],
+  "upstream_provenance": {
+    "origin": "derived",
+    "upstream_identity": "https://github.com/sqlite/sqlite",
+    "canonical_repository_id": 176278485,
+    "canonical_repository_id_source": "GitHub host-assigned numeric repository identifier, stable across renames, transfers and mirrors",
+    "base_commit_sha": "995f96f8e11036c909b1dec14049999bc23421c6",
+    "base_commit_date": "2023-08-24T12:36:59Z",
+    "fix_commit_sha": "3736d874229135abecb935d938346dee5429196a",
+    "fix_commit_date": "2023-10-09T12:51:58Z",
+    "task_generating_event": "upstream corrective change for CVE-2024-0232",
+    "task_generating_event_timestamp": "2023-10-09T12:51:58Z",
+    "task_generating_event_source": "GitHub commit API committer date",
+    "train_cutoff": "2023-10-09",
+    "train_cutoff_basis": "The fix commit 3736d874, titled Fix a potential UAF caused by JSON parser cache spill, landed upstream on 2023-10-09. The CVE publication date of 2024-01-16 is deliberately NOT used, because it is later and would be the laxer bound.",
+    "train_cutoff_confidence": "high",
+    "license": "blessing",
+    "license_note": "SQLite is released into the public domain under the SQLite Blessing. GitHub reports NOASSERTION because the blessing is not an SPDX-recognised identifier.",
+    "modifications": [
+      "Extracted an upstream source snapshot at the base commit into environment/src.tgz.",
+      "Removed the upstream git history and reinitialised a single pristine-snapshot commit with no remote, in environment/scripts/prepare.sh.",
+      "Authored a task-specific harness driver and judge, materialised into the image.",
+      "Authored a verifier entrypoint at tests/test.sh and a regression corpus.",
+      "Authored a withheld reproducer at tests/data/poc.bin, distinct from the reference reproducer at solution/poc.bin.",
+      "Authored the grading artifacts tests/test_output.py, tests/test_weights.json, tests/rubric.json and tests/pytest.json."
+    ],
+    "originality_claim": false,
+    "originality_claim_note": "This instance is derived, not original. The defect, the base tree and the corrective change are upstream work. Only the harness, judge, corpus and grading artifacts are authored here.",
+    "data_quality": [],
+    "advisory_fixed_release": "3.43.2",
+    "advisory_fixed_release_note": "The advisory carries no 'before X' prose, so the first patched release is resolved from the OSV record rather than parsed from a sentence. OSV lists exactly two affected versions, version-3.43.0 and version-3.43.1, and its GIT range fixed event names 43fa051ec7c5a7d89e1f5f541a5cd34d53e07422, which is the release commit titled 'Version 3.43.2' dated 2023-10-10 and touches only manifest and manifest.uuid. The corrective code change is the separate commit 3736d874229135abecb935d938346dee5429196a dated 2023-10-09, which touches src/json.c and test/json101.test. Both are correct under their own semantics: OSV names the release that first carries the fix, this bundle names the change that made it. The shipped tree is version-3.43.0, which precedes 3.43.2, so the environment does not carry the fix.",
+    "advisory_fixed_release_source": "https://api.osv.dev/v1/vulns/CVE-2024-0232, affected[].versions and GIT range fixed event, resolved 2026-09-05",
+    "advisory_first_unaffected_evidence": {
+      "osv_affected_versions": [
+        "version-3.43.0",
+        "version-3.43.1"
+      ],
+      "osv_git_fixed_event": "43fa051ec7c5a7d89e1f5f541a5cd34d53e07422",
+      "osv_git_fixed_event_subject": "Version 3.43.2",
+      "corrective_change_commit": "3736d874229135abecb935d938346dee5429196a",
+      "corrective_change_subject": "Fix a potential UAF caused by JSON parser cache spill."
+    }
+  }
+}

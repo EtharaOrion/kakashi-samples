@@ -1,0 +1,24 @@
+--- a/pkg/types/alpine/apk.go	2023-11-14 22:13:20.000000000 +0000
++++ b/pkg/types/alpine/apk.go	2026-09-06 07:51:08.782039010 +0000
+@@ -149,6 +149,11 @@
+ 		}
+ 
+ 		if strings.HasPrefix(header.Name, ".SIGN") && pkg.Signature == nil {
++			// the header size is attacker controlled, so it is only trusted up to the
++			// number of bytes that are actually left in signature.tar.gz
++			if header.Size < 0 || header.Size > int64(sigBuf.Len()) {
++				return fmt.Errorf("signature entry declares %d bytes but only %d remain in signature.tar.gz", header.Size, sigBuf.Len())
++			}
+ 			sigBytes := make([]byte, header.Size)
+ 			if _, err = sigReader.Read(sigBytes); err != nil && err != io.EOF {
+ 				return errors.Wrap(err, "reading signature")
+@@ -176,6 +181,9 @@
+ 		}
+ 
+ 		if header.Name == ".PKGINFO" {
++			if header.Size < 0 || header.Size > int64(controlTar.Len()) {
++				return fmt.Errorf(".PKGINFO entry declares %d bytes but only %d remain in control.tar.gz", header.Size, controlTar.Len())
++			}
+ 			pkginfoContent := make([]byte, header.Size)
+ 			if _, err = ctlReader.Read(pkginfoContent); err != nil && err != io.EOF {
+ 				return errors.Wrap(err, "reading .PKGINFO")

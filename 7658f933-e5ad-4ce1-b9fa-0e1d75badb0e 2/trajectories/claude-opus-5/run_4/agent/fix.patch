@@ -1,0 +1,115 @@
+diff --git a/jwt/api_jws.py b/jwt/api_jws.py
+index 28da7a8..b140fed 100644
+--- a/jwt/api_jws.py
++++ b/jwt/api_jws.py
+@@ -28,6 +28,22 @@ if TYPE_CHECKING:
+     from .types import SigOptions
+ 
+ 
++def _decode_segment(segment: bytes) -> bytes:
++    """Base64url-decode a single JWS segment.
++
++    ``base64url_decode`` tolerates characters outside the base64url alphabet
++    and non-zero unused trailing bits, so several distinct segments decode to
++    the same bytes -- including the signature. Reject anything that is not the
++    canonical encoding of what it decodes to.
++    """
++    decoded = base64url_decode(segment)
++    if base64url_encode(decoded) != segment.rstrip(b"=").translate(
++        bytes.maketrans(b"+/", b"-_")
++    ):
++        raise binascii.Error("Invalid base64url encoding")
++    return decoded
++
++
+ class PyJWS:
+     header_typ = "JWT"
+ 
+@@ -296,7 +312,7 @@ class PyJWS:
+             raise DecodeError("Not enough segments") from err
+ 
+         try:
+-            header_data = base64url_decode(header_segment)
++            header_data = _decode_segment(header_segment)
+         except (TypeError, binascii.Error) as err:
+             raise DecodeError("Invalid header padding") from err
+ 
+@@ -309,12 +325,12 @@ class PyJWS:
+             raise DecodeError("Invalid header string: must be a json object")
+ 
+         try:
+-            payload = base64url_decode(payload_segment)
++            payload = _decode_segment(payload_segment)
+         except (TypeError, binascii.Error) as err:
+             raise DecodeError("Invalid payload padding") from err
+ 
+         try:
+-            signature = base64url_decode(crypto_segment)
++            signature = _decode_segment(crypto_segment)
+         except (TypeError, binascii.Error) as err:
+             raise DecodeError("Invalid crypto padding") from err
+ 
+diff --git a/jwt/api_jwt.py b/jwt/api_jwt.py
+index a26fa9c..74e902f 100644
+--- a/jwt/api_jwt.py
++++ b/jwt/api_jwt.py
+@@ -470,7 +470,7 @@ class PyJWT:
+     ) -> None:
+         try:
+             iat = int(payload["iat"])
+-        except ValueError:
++        except (ValueError, TypeError, OverflowError):
+             raise InvalidIssuedAtError(
+                 "Issued At claim (iat) must be an integer."
+             ) from None
+@@ -485,7 +485,7 @@ class PyJWT:
+     ) -> None:
+         try:
+             nbf = int(payload["nbf"])
+-        except ValueError:
++        except (ValueError, TypeError, OverflowError):
+             raise DecodeError("Not Before claim (nbf) must be an integer.") from None
+ 
+         if nbf > (now + leeway):
+@@ -499,7 +499,7 @@ class PyJWT:
+     ) -> None:
+         try:
+             exp = int(payload["exp"])
+-        except ValueError:
++        except (ValueError, TypeError, OverflowError):
+             raise DecodeError(
+                 "Expiration Time claim (exp) must be an integer."
+             ) from None
+diff --git a/jwt/utils.py b/jwt/utils.py
+index 56e89bb..c8ccded 100644
+--- a/jwt/utils.py
++++ b/jwt/utils.py
+@@ -22,6 +22,9 @@ def force_bytes(value: Union[bytes, str]) -> bytes:
+         raise TypeError("Expected a string value")
+ 
+ 
++_B64_URLSAFE = bytes.maketrans(b"+/", b"-_")
++
++
+ def base64url_decode(input: Union[bytes, str]) -> bytes:
+     input_bytes = force_bytes(input)
+ 
+@@ -30,7 +33,17 @@ def base64url_decode(input: Union[bytes, str]) -> bytes:
+     if rem > 0:
+         input_bytes += b"=" * (4 - rem)
+ 
+-    return base64.urlsafe_b64decode(input_bytes)
++    decoded = base64.urlsafe_b64decode(input_bytes)
++
++    # ``urlsafe_b64decode`` silently drops characters outside the alphabet and
++    # ignores non-zero unused trailing bits, so distinct encodings can decode
++    # to the same bytes. Only accept the canonical encoding.
++    if base64.urlsafe_b64encode(decoded).rstrip(b"=") != input_bytes.rstrip(
++        b"="
++    ).translate(_B64_URLSAFE):
++        raise binascii.Error("Invalid base64url encoding")
++
++    return decoded
+ 
+ 
+ def base64url_encode(input: bytes) -> bytes:
