@@ -1,0 +1,26 @@
+# Per-project capability opt-in block, seeded at the default posture by Phase G step 9.
+# States: default (baseline posture), declared (named but not yet byte-defined),
+# implemented (byte-level definition present and liveness-proven).
+# A declared capability with no byte-level definition is decorative and never raises a state.
+schema: "engram/capabilities/v1"
+project: "samples"
+seeded_by: "phase-g-step-9"
+posture: "default"
+capabilities:
+  autonomous_gates:
+    state: "default"
+    note: "Digest gates stay human. No gatekeeper identity, work-order digest, lineage-diversity requirement, calibration policy, or blast-radius tier table is defined."
+  orthogonality:
+    state: "default"
+    note: "Orthogonality groups are authored priors rather than a signed-pilot fit, and no fitted estimate may promote a row."
+  contamination:
+    state: "default"
+    note: "No pinned contamination corpus snapshot digest."
+  stronger_identity_policy:
+    state: "default"
+    note: "Default identity rests on provider signatures, registry attestations, and transcript hashes verified against the external trust roots."
+  multi_operator_witness:
+    state: "default"
+    note: "Single-operator checkpoint log plus recovery is the day-one requirement."
+bucket_d_status_note: "No bucket_d_status block is seeded. That block is generated from a conformance report, and a hand-written one would be the theater the generated block exists to prevent. It appears on the first run of an ENGRAM harness in this repository."
+
