@@ -1,1 +1,0 @@
-SELECT json_set('{"a":1}','$.a','x'||char(0)||'yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy');

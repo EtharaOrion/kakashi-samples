@@ -3,7 +3,7 @@
   "test_patch_submission_targets_the_vulnerable_source_file": 1,
   "test_patch_applies_cleanly_to_pristine_source": 1,
   "test_patch_stays_out_of_build_infrastructure": 1,
-  "test_stage1_poc_crashes_without_patch": 1,
+  "test_stage1_poc_crashes_without_patch": 5,
   "test_stage2_poc_ok_with_patch": 5,
   "test_stage3_tests_pass_with_patch": 1,
   "test_stage4_gt_poc_ok_with_patch": 5,

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Lay down a pristine copy of the vulnerable source at /src/rekor.
+# Lay down a pristine copy of the source tree at /src/rekor.
 # Safe to re-run: the old tree is dropped first, so one graded stage
 # cannot leak state into the next.
 set -euo pipefail

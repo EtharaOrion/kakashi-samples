@@ -1,0 +1,131 @@
+diff --git a/jwt/api_jws.py b/jwt/api_jws.py
+index 28da7a8..9935dfa 100644
+--- a/jwt/api_jws.py
++++ b/jwt/api_jws.py
+@@ -28,6 +28,21 @@ if TYPE_CHECKING:
+     from .types import SigOptions
+ 
+ 
++def _reject_duplicate_keys(pairs: list[tuple[Any, Any]]) -> dict[str, Any]:
++    """Build a JSON object, refusing members that are defined more than once.
++
++    ``json.loads`` keeps the last value for a repeated name, while other JSON
++    parsers keep the first one, so a header carrying ``alg`` twice can mean one
++    thing here and another thing to whoever else reads the same token.
++    """
++    obj: dict[str, Any] = {}
++    for key, value in pairs:
++        if key in obj:
++            raise ValueError(f"duplicate object member {key!r}")
++        obj[key] = value
++    return obj
++
++
+ class PyJWS:
+     header_typ = "JWT"
+ 
+@@ -289,6 +304,14 @@ class PyJWS:
+         if not isinstance(jwt, bytes):
+             raise DecodeError(f"Invalid token type. Token must be a {bytes}")
+ 
++        # The JWS Compact Serialization is exactly three segments (RFC 7515
++        # Section 7.1). Without this check any extra separator ends up inside
++        # the payload segment, where base64 decoding drops it again: the claims
++        # verified here and the claims another parser reads out of the very same
++        # token then differ.
++        if jwt.count(b".") > 2:
++            raise DecodeError("Too many segments")
++
+         try:
+             signing_input, crypto_segment = jwt.rsplit(b".", 1)
+             header_segment, payload_segment = signing_input.split(b".", 1)
+@@ -301,7 +324,9 @@ class PyJWS:
+             raise DecodeError("Invalid header padding") from err
+ 
+         try:
+-            header: dict[str, Any] = json.loads(header_data)
++            header: dict[str, Any] = json.loads(
++                header_data, object_pairs_hook=_reject_duplicate_keys
++            )
+         except ValueError as e:
+             raise DecodeError(f"Invalid header string: {e}") from e
+ 
+diff --git a/jwt/api_jwt.py b/jwt/api_jwt.py
+index a26fa9c..5bf770c 100644
+--- a/jwt/api_jwt.py
++++ b/jwt/api_jwt.py
+@@ -39,6 +39,21 @@ if TYPE_CHECKING or bool(os.getenv("SPHINX_BUILD", "")):
+     AllowedPublicKeyTypes: TypeAlias = Union[AllowedPublicKeys, PyJWK, str, bytes]
+ 
+ 
++def _reject_duplicate_keys(pairs: list[tuple[Any, Any]]) -> dict[str, Any]:
++    """Build a JSON object, refusing members that are defined more than once.
++
++    ``json.loads`` keeps the last value for a repeated name, while other JSON
++    parsers keep the first one, so a payload carrying ``exp`` twice can mean one
++    thing here and another thing to whoever else reads the same token.
++    """
++    obj: dict[str, Any] = {}
++    for key, value in pairs:
++        if key in obj:
++            raise ValueError(f"duplicate object member {key!r}")
++        obj[key] = value
++    return obj
++
++
+ class PyJWT:
+     def __init__(self, options: Options | None = None) -> None:
+         self.options: FullOptions
+@@ -290,7 +305,9 @@ class PyJWT:
+         payloads.
+         """
+         try:
+-            payload: dict[str, Any] = json.loads(decoded["payload"])
++            payload: dict[str, Any] = json.loads(
++                decoded["payload"], object_pairs_hook=_reject_duplicate_keys
++            )
+         except ValueError as e:
+             raise DecodeError(f"Invalid payload string: {e}") from e
+         if not isinstance(payload, dict):
+@@ -560,6 +577,9 @@ class PyJWT:
+     def _validate_iss(
+         self, payload: dict[str, Any], issuer: Container[str] | str | None
+     ) -> None:
++        if "iss" in payload and not isinstance(payload["iss"], str):
++            raise InvalidIssuerError("Payload Issuer (iss) must be a string")
++
+         if issuer is None:
+             return
+ 
+@@ -567,8 +587,6 @@ class PyJWT:
+             raise MissingRequiredClaimError("iss")
+ 
+         iss = payload["iss"]
+-        if not isinstance(iss, str):
+-            raise InvalidIssuerError("Payload Issuer (iss) must be a string")
+ 
+         if isinstance(issuer, str):
+             if iss != issuer:
+diff --git a/jwt/utils.py b/jwt/utils.py
+index 56e89bb..e16c341 100644
+--- a/jwt/utils.py
++++ b/jwt/utils.py
+@@ -22,9 +22,18 @@ def force_bytes(value: Union[bytes, str]) -> bytes:
+         raise TypeError("Expected a string value")
+ 
+ 
++_BASE64_ALPHABET_RE = re.compile(rb"[A-Za-z0-9+/\-_]*={0,2}")
++
++
+ def base64url_decode(input: Union[bytes, str]) -> bytes:
+     input_bytes = force_bytes(input)
+ 
++    # ``urlsafe_b64decode`` silently drops every character outside the base64
++    # alphabet, so unrelated data (segment separators, whitespace, ...) can be
++    # smuggled into a value without changing what it decodes to.
++    if not _BASE64_ALPHABET_RE.fullmatch(input_bytes):
++        raise binascii.Error("Invalid base64 characters")
++
+     rem = len(input_bytes) % 4
+ 
+     if rem > 0:

@@ -1,0 +1,46 @@
+--- a/pkg/types/alpine/apk.go	2026-09-22 18:41:01.878670256 +0000
++++ b/pkg/types/alpine/apk.go	2026-09-22 18:41:20.235673929 +0000
+@@ -43,6 +43,17 @@
+ 	controlSHA1Digest []byte
+ }
+ 
++// An APK is a set of small metadata streams (a signature and a .PKGINFO key/value
++// file) followed by the package data. Neither metadata member can legitimately
++// be large, so entries claiming a size beyond these limits are rejected instead
++// of being used to size an allocation; a hostile tar header can otherwise declare
++// an arbitrarily large size (or a negative one, which underflows) and exhaust
++// memory before a single byte of the entry is read.
++const (
++	maxSignatureSize = 1 << 20 // 1 MiB
++	maxPkginfoSize   = 1 << 20 // 1 MiB
++)
++
+ type sha1Reader struct {
+ 	r         *bufio.Reader
+ 	addToHash bool
+@@ -149,8 +160,11 @@
+ 		}
+ 
+ 		if strings.HasPrefix(header.Name, ".SIGN") && pkg.Signature == nil {
++			if header.Size < 0 || header.Size > maxSignatureSize {
++				return errors.Errorf("signature entry size %d exceeds maximum of %d bytes", header.Size, maxSignatureSize)
++			}
+ 			sigBytes := make([]byte, header.Size)
+-			if _, err = sigReader.Read(sigBytes); err != nil && err != io.EOF {
++			if _, err = io.ReadFull(sigReader, sigBytes); err != nil && err != io.EOF && err != io.ErrUnexpectedEOF {
+ 				return errors.Wrap(err, "reading signature")
+ 			}
+ 			// we're not sure whether this is PEM encoded or not, so handle both cases
+@@ -176,8 +190,11 @@
+ 		}
+ 
+ 		if header.Name == ".PKGINFO" {
++			if header.Size < 0 || header.Size > maxPkginfoSize {
++				return errors.Errorf(".PKGINFO entry size %d exceeds maximum of %d bytes", header.Size, maxPkginfoSize)
++			}
+ 			pkginfoContent := make([]byte, header.Size)
+-			if _, err = ctlReader.Read(pkginfoContent); err != nil && err != io.EOF {
++			if _, err = io.ReadFull(ctlReader, pkginfoContent); err != nil && err != io.EOF && err != io.ErrUnexpectedEOF {
+ 				return errors.Wrap(err, "reading .PKGINFO")
+ 			}
+ 

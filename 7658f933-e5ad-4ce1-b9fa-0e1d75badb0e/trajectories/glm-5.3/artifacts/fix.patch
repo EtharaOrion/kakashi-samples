@@ -1,0 +1,35 @@
+diff --git a/jwt/api_jwt.py b/jwt/api_jwt.py
+index a26fa9c..662bc02 100644
+--- a/jwt/api_jwt.py
++++ b/jwt/api_jwt.py
+@@ -474,6 +474,10 @@ class PyJWT:
+             raise InvalidIssuedAtError(
+                 "Issued At claim (iat) must be an integer."
+             ) from None
++        except TypeError:
++            raise InvalidIssuedAtError(
++                "Issued At claim (iat) must be an integer."
++            ) from None
+         if iat > (now + leeway):
+             raise ImmatureSignatureError("The token is not yet valid (iat)")
+ 
+@@ -487,6 +491,8 @@ class PyJWT:
+             nbf = int(payload["nbf"])
+         except ValueError:
+             raise DecodeError("Not Before claim (nbf) must be an integer.") from None
++        except TypeError:
++            raise DecodeError("Not Before claim (nbf) must be an integer.") from None
+ 
+         if nbf > (now + leeway):
+             raise ImmatureSignatureError("The token is not yet valid (nbf)")
+@@ -503,6 +509,10 @@ class PyJWT:
+             raise DecodeError(
+                 "Expiration Time claim (exp) must be an integer."
+             ) from None
++        except TypeError:
++            raise DecodeError(
++                "Expiration Time claim (exp) must be an integer."
++            ) from None
+ 
+         if exp <= (now - leeway):
+             raise ExpiredSignatureError("Signature has expired")

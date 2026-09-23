@@ -1,0 +1,87 @@
+--- a/pkg/types/alpine/apk.go
++++ b/pkg/types/alpine/apk.go
+@@ -36,6 +36,14 @@
+ 	"gopkg.in/ini.v1"
+ )
+ 
++const (
++	// maxMemberSize bounds the decompressed size of the signature.tar.gz and
++	// control.tar.gz members, which are buffered entirely in memory.
++	maxMemberSize = 32 * 1024 * 1024
++	// maxEntrySize bounds a single tar entry read out of those members.
++	maxEntrySize = 8 * 1024 * 1024
++)
++
+ type Package struct {
+ 	Pkginfo           map[string]string // KVP pairs
+ 	Signature         []byte
+@@ -87,6 +95,17 @@
+ 	s.addToHash = false
+ }
+ 
++// readEntry returns at most size bytes of the current tar entry. The size
++// advertised in a tar header is attacker controlled, so the buffer grows with
++// the data actually present rather than being preallocated from it.
++func readEntry(r io.Reader, size int64) ([]byte, error) {
++	content, err := io.ReadAll(io.LimitReader(r, size))
++	if err != nil && err != io.EOF && err != io.ErrUnexpectedEOF {
++		return nil, err
++	}
++	return content, nil
++}
++
+ func (p *Package) Unmarshal(pkgReader io.Reader) error {
+ 	pkg := Package{}
+ 	// bufio.Reader is required if Multistream(false) is used
+@@ -107,8 +126,10 @@
+ 	// signature.tar.gz | control.tar.gz | data.tar.gz
+ 	sigBuf := bytes.Buffer{}
+ 	// buffer the whole signature.tar.gz member so its tar entries can be walked
+-	if _, err := io.Copy(&sigBuf, gzipReader); err != nil {
++	if n, err := io.Copy(&sigBuf, io.LimitReader(gzipReader, maxMemberSize+1)); err != nil {
+ 		return errors.Wrap(err, "reading signature.tar.gz")
++	} else if n > maxMemberSize {
++		return errors.New("signature.tar.gz exceeds maximum size")
+ 	}
+ 
+ 	// the SHA1 sum used in the signature is over the entire file control.tar.gz so we need to
+@@ -125,8 +146,10 @@
+ 
+ 	controlTar := bytes.Buffer{}
+ 	// buffer the whole control.tar.gz member so its tar entries can be walked
+-	if _, err = io.Copy(&controlTar, gzipReader); err != nil {
++	if n, err := io.Copy(&controlTar, io.LimitReader(gzipReader, maxMemberSize+1)); err != nil {
+ 		return errors.Wrap(err, "reading control.tar.gz")
++	} else if n > maxMemberSize {
++		return errors.New("control.tar.gz exceeds maximum size")
+ 	}
+ 
+ 	// signature uses sha1 digest hardcoded in abuild-sign tool
+@@ -149,8 +172,11 @@
+ 		}
+ 
+ 		if strings.HasPrefix(header.Name, ".SIGN") && pkg.Signature == nil {
+-			sigBytes := make([]byte, header.Size)
+-			if _, err = sigReader.Read(sigBytes); err != nil && err != io.EOF {
++			if header.Size > maxEntrySize {
++				return errors.New("signature in alpine package exceeds maximum size")
++			}
++			sigBytes, err := readEntry(sigReader, header.Size)
++			if err != nil {
+ 				return errors.Wrap(err, "reading signature")
+ 			}
+ 			// we're not sure whether this is PEM encoded or not, so handle both cases
+@@ -176,8 +202,11 @@
+ 		}
+ 
+ 		if header.Name == ".PKGINFO" {
+-			pkginfoContent := make([]byte, header.Size)
+-			if _, err = ctlReader.Read(pkginfoContent); err != nil && err != io.EOF {
++			if header.Size > maxEntrySize {
++				return errors.New(".PKGINFO file exceeds maximum size")
++			}
++			pkginfoContent, err := readEntry(ctlReader, header.Size)
++			if err != nil {
+ 				return errors.Wrap(err, "reading .PKGINFO")
+ 			}
+ 

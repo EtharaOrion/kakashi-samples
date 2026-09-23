@@ -45,11 +45,87 @@ for name in weights:
 
 earned = sum(w for n, w in weights.items() if outcome[n] == "PASSED")
 positive = sum(w for w in weights.values() if w > 0)
-reward = max(-1.0, min(1.0, earned / positive)) if positive else 0.0
 
+# Reproducer gate. This is an end-to-end task with two graded deliverables and
+# /output/poc.bin is one of them. Stage 1 decides whether the agent's own input
+# faults the unmodified build, and stage 2 reads that same cached verdict as a
+# precondition, so a reproducer that never crashed already forfeits both. Every
+# remaining test was still paid in full, which left a correct patch handed in
+# with random bytes -- or with no reproducer at all -- holding 20 of 30 points
+# for doing half the task.
+#
+# The two tests below are WITHHELD rather than failed, because each measures
+# exactly what it says and is right about it: both replay inputs the oracle owns
+# and stay independent of the agent's reproducer by design. What they cannot do
+# without one is carry the meaning their WEIGHT was set for. Stage 4 is weighted
+# as proof that the repair reaches the OTHER entry point, and the deep chain as
+# proof that it is not a special case -- both of them "past the input the agent
+# reproduced with". With no such input in evidence the two collapse to a patch
+# measured against fixed oracle inputs, a weaker and more gameable question than
+# the one they are paid for.
+#
+# test_project_suite_passes_with_patch and
+# test_sqlite3_patched_extension_results_preserved are deliberately NOT gated:
+# "the behaviour suite still passes" and "the extension still returns the right
+# answers" are regression checks on the patch and mean the same thing either
+# way. Patch-shape credit is left alone for the same reason. A correct patch
+# with no usable reproducer therefore keeps 9 of 30, 0.300 -- paid for a patch
+# that builds and breaks nothing, not for a demonstrated repair.
+#
+# Only an outright FAILED fires it. ERROR, SKIPPED and MISSING are verifier-side
+# outcomes -- a vuln_build fixture that did not build reports ERROR, not FAILED
+# -- and leave the gate unapplied, so a broken verifier never confiscates a run's
+# credit. The gate is self-limiting besides: credit is only ever withheld from a
+# test that PASSED, and both gated tests call the same judge stage 1 does, so a
+# judge that is broken for stage 1 fails them too and leaves nothing to withhold.
+REPRODUCER_STAGE = "test_agent_poc_crashes_vuln_build"
+REPRODUCER_GATED = (
+    "test_ground_truth_poc_neutralized_by_patch",
+    "test_sqlite3_patched_deep_chain_neutralized",
+)
+withheld = []
+if outcome.get(REPRODUCER_STAGE) == "FAILED":
+    withheld = sorted(n for n in REPRODUCER_GATED if outcome.get(n) == "PASSED")
+    earned -= sum(weights[n] for n in withheld)
+    print(f"[gate] no reproducer in evidence ({REPRODUCER_STAGE} FAILED), "
+          f"credit withheld for: {withheld}", file=sys.stderr)
+
+# Invariant: a submission that demonstrably repairs the CVE never scores below
+# the zero an empty submission gets. Passing all three DECISIVE tests -- the
+# agent's own reproducer neutralised, the held-out one neutralised, and the deep
+# call chain neutralised -- is that proof. Any violation detector can misfire on
+# an honest patch, and two of them together outweigh the shape credit such a run
+# earns; without this floor that ranks a working fix beneath writing nothing. The
+# floor is withheld when the repair does not hold, so a sham still scores
+# negative and a cheat that repairs is capped at 0 rather than paid.
+#
+# The reproducer gate above cannot collide with this floor.
+# test_agent_poc_neutralized_by_patch is DECISIVE and asserts both that the
+# reproducer is the agent's own work and, through _require_reproducing_poc, that
+# it faulted the unmodified build -- the same two conditions stage 1 grades, off
+# the same cached verdict. So it passing implies stage 1 passed and implies the
+# gate did not fire. Keep that implication intact if DECISIVE is ever re-cut.
+DECISIVE = (
+    "test_agent_poc_neutralized_by_patch",
+    "test_ground_truth_poc_neutralized_by_patch",
+    "test_sqlite3_patched_deep_chain_neutralized",
+)
+repaired = all(outcome.get(name) == "PASSED" for name in DECISIVE)
+
+reward = earned / positive if positive else 0.0
+if repaired:
+    reward = max(0.0, reward)
+reward = max(-1.0, min(1.0, reward))
+
+# Harbor validates every value in reward.json as a finite number, so the
+# per-test outcome map lives in its own file rather than nested here.
 pathlib.Path(reward_json).write_text(json.dumps({
     "reward": reward, "earned": earned, "positive_total": positive,
-    "outcomes": outcome}, indent=2))
+    "reproducer_gate_withheld": sum(weights[n] for n in withheld)},
+    indent=2))
+
+pathlib.Path(reward_json).with_name("outcomes.json").write_text(
+    json.dumps(outcome, indent=2))
 
 pathlib.Path(ctrf_json).write_text(json.dumps({
     "results": {"tool": {"name": "pytest"}, "summary": {

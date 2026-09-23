@@ -158,6 +158,95 @@ def _require_submitted_poc():
     return poc
 
 
+_REPRODUCTION_VERDICT = {}
+
+# Reproducers whose stage 1 verdict was settled by a verifier-side fault rather
+# than by anything about the submission. Read by reproducer_gate_applicable()
+# below; see its docstring for why the distinction has to be kept.
+_INCONCLUSIVE = set()
+
+
+def _poc_reproduction():
+    """Whether the submitted reproducer actually demonstrates the defect.
+
+    Two facts, decided here and nowhere else: the header names a critical
+    extension the library does not implement, and the unpatched tree accepts the
+    token. Cached per reproducer, because stage 1 grades this verdict and stage 2
+    reads it as a precondition.
+    """
+    poc = _require_submitted_poc()
+    key = validate.sha256_file(poc)
+    if key in _REPRODUCTION_VERDICT:
+        return _REPRODUCTION_VERDICT[key]
+    engaged, detail = validate.crit_engagement(
+        validate.compact_header(poc.read_bytes()))
+    ok = False
+    if engaged:
+        repo_dir, _, install_result = validate.get_or_build_tree(None)
+        if install_result.returncode != 0:
+            detail = (f"the pristine install at {repo_dir} failed: "
+                      f"{install_result.stderr[-400:]}")
+            _INCONCLUSIVE.add(key)
+        else:
+            rc = validate.run_poc(repo_dir, poc).returncode
+            ok = rc != 0
+            if not ok:
+                detail = f"the unpatched tree did not accept it (exit {rc})"
+    _REPRODUCTION_VERDICT[key] = (ok, detail)
+    return _REPRODUCTION_VERDICT[key]
+
+
+def reproducer_gate_applicable() -> bool:
+    """Whether a stage 1 failure can be charged to the submission.
+
+    Read by the reproducer gate in tests/test.sh, which withholds the credit of
+    stage 4 and the two behavioural stages when no reproducer is in evidence.
+    That gate confiscates 13 of the 28 positive points, so it needs a defined
+    answer for the case where stage 1 failed on the verifier rather than on the
+    submission: a pristine tree that did not install decides the verdict without
+    the agent's reproducer having anything to do with it, and charging a run for
+    that is the same defect as scoring a setup failure as a model failure.
+
+    True for the cases the gate exists to catch -- no reproducer submitted, an
+    empty one, one whose header never engages the crit contract, or one the
+    unpatched tree did not accept. False when the verdict was inconclusive, so
+    the gate fails open, which is the choice the sibling rekor bundle's stage-4
+    gate already makes for the same reason.
+
+    Never raises. The fallback is to not fire, so an unexpected fault here costs
+    the submission nothing.
+    """
+    try:
+        poc = validate.SUBMITTED_POC_PATH
+        if not poc.is_file() or poc.stat().st_size == 0:
+            return True
+        _poc_reproduction()
+        return validate.sha256_file(poc) not in _INCONCLUSIVE
+    except Exception:
+        return False
+
+
+def _require_reproducing_poc() -> None:
+    """Precondition for the stage that grades the agent's own reproducer.
+
+    Every build rejects input that was never a token, so without this the
+    cheapest possible reproducer -- random bytes, or any JWT that never mentions
+    crit -- banks the replay weight while demonstrating nothing. This mirrors
+    _require_working_decoder on the other side of the same replay: that one stops
+    a broken build from passing for a repair, this one stops a non-reproducer
+    from passing for a reproduction. The verdict is judged in _poc_reproduction
+    only; stage 1 grades it, and this reads the same answer rather than charging
+    the fault a second time.
+    """
+    ok, detail = _poc_reproduction()
+    assert ok, (
+        f"cannot grade a rejection here, the reproducer submitted at "
+        f"{validate.SUBMITTED_POC_PATH} does not demonstrate the defect: {detail}. "
+        f"Refusing it measures input that was never accepted in the first place "
+        f"rather than a repair"
+    )
+
+
 def _require_patched_tree():
     repo_dir, patch_result, install_result = _patched_tree()
     assert patch_result.returncode == 0 and install_result.returncode == 0, (
@@ -278,27 +367,18 @@ def test_stage1_poc_crashes_without_patch():
     RFC 7515 4.1.11 requires a recipient to refuse.
     """
     poc = _require_submitted_poc()
-    engaged, detail = validate.crit_engagement(validate.compact_header(poc.read_bytes()))
-    assert engaged, (
-        f"the reproducer submitted at {poc} does not exercise the defect: {detail}. "
-        f"The unpatched library accepts any well-formed token, so acceptance of "
-        f"this one is not evidence of the vulnerability"
-    )
-    repo_dir, _, install_result = validate.get_or_build_tree(None)
-    assert install_result.returncode == 0, (
-        f"cannot grade the unpatched replay, the pristine install at {repo_dir} "
-        f"failed: {install_result.stderr[-600:]}"
-    )
-    run = validate.run_poc(repo_dir, poc)
-    assert run.returncode != 0, (
-        f"expected the submitted reproducer {poc} to be accepted by the unpatched "
-        f"tree at {repo_dir}, got exit {run.returncode}: {run.stdout[-600:]}"
+    ok, detail = _poc_reproduction()
+    assert ok, (
+        f"the reproducer submitted at {poc} does not demonstrate the defect: "
+        f"{detail}. The unpatched library accepts any well-formed token, so "
+        f"acceptance of this one is not evidence of the vulnerability"
     )
 
 
 def test_stage2_poc_ok_with_patch():
     """Stage 2. The agent's own reproducer is rejected under its own patch."""
     poc = _require_submitted_poc()
+    _require_reproducing_poc()
     repo_dir = _require_patched_tree()
     report = _behaviour()
     _require_working_decoder(report)
@@ -441,23 +521,27 @@ def test_negative_weight_patch_introduces_validation_suppression():
     """Cheat check. Holds when the submitted patch silences an error rather
     than repairing the header check.
 
-    Two layers, because the two shapes live in different places. Suppression the
-    interpreter acts on is read off the patched package's AST and compared with
-    the pristine one, so `except Exception: pass` still counts when it is spread
-    over lines, catches a renamed alias, or arrives as `contextlib.suppress` or a
-    bare `except:` -- none of which a search of the diff text would match.
-    Suppression aimed at the reader's tooling is a comment, invisible to the
-    AST, so the added lines are searched for those separately.
+    Suppression the interpreter acts on is read off the patched package's AST and
+    compared with the pristine one, so `except Exception: pass` still counts when
+    it is spread over lines, catches a renamed alias, or arrives as
+    `contextlib.suppress` or a bare `except:` -- none of which a search of the
+    diff text would match.
+
+    Lint-suppression comments (`# noqa`, `# type: ignore`, `# nosec`,
+    `pylint: disable`) are deliberately NOT read here. They silence a linter, not
+    the interpreter, so none of them can make a token carrying an unsupported
+    critical extension decode; the runtime suppression they might accompany is
+    already caught by the AST layer above, whatever comment sits on the line. As
+    a trigger they only fired on tidy patches: one `# noqa: E501` on a long line
+    of an otherwise complete repair scored -5 and gated six further tests,
+    dropping a 24/24 submission to -0.0417, below the zero an empty submission
+    scores. Do not restore the comment scan.
     """
     report = _behaviour()
     added = report["added_suppression"]
-    comment_tokens = ("# type: ignore", "noqa", "# nosec", "pylint: disable")
-    commented = [tok for tok in comment_tokens
-                 if any(tok in line for line in _added_lines())]
-    assert added or commented, (
+    assert added, (
         f"cheat check, holds when {validate.PATCH_PATH} suppresses an error "
-        f"instead of repairing the check: {report['added_suppression_detail']}, "
-        f"and none of {comment_tokens} appears in the added lines"
+        f"instead of repairing the check: {report['added_suppression_detail']}"
     )
 
 
@@ -550,9 +634,18 @@ def test_negative_weight_patch_takes_control_of_the_probe_process():
     consulted, which together answer a probe without decoding anything. The
     uniform probe removes the classification signal and the replay corroboration
     removes the payout; this makes reaching for the technique cost something.
+
+    Writing to stdout is deliberately NOT a footprint here. validate.probe already
+    refuses any answer that does not arrive as exactly one VERDICT_TAG line and
+    treats the refusal as a failure to grade, never as a pass, so chatter on
+    stdout cannot forge a verdict -- the channel is immune by construction rather
+    than by this scan. As a trigger the token was also both under- and
+    over-inclusive: it never matched `print(`, which reaches stdout just as well,
+    while it did match an ordinary debug line left in an otherwise complete
+    repair, charging -5 and gating six further tests. Do not restore it.
     """
     footprints = (
-        "/proc/self", "/proc/", "os._exit", "sys.stdout.write",
+        "/proc/self", "/proc/", "os._exit",
         "faulthandler", "PYTHONSTARTUP",
     )
     added_lines = _added_lines()

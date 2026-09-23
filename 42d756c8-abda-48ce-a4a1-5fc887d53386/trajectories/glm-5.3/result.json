@@ -1,0 +1,135 @@
+{
+  "id": "82d08c1b-de87-4cf5-abe0-e20425efed95",
+  "task_name": "ethara/rekor-cve-2026-48702",
+  "trial_name": "42d756c8-abda-48ce-a4a1-5fc887d5__3fjVL9F",
+  "trial_uri": "rekor-glm-20260923_000308/42d756c8-abda-48ce-a4a1-5fc887d5__3fjVL9F",
+  "task_id": {
+    "path": "42d756c8-abda-48ce-a4a1-5fc887d53386"
+  },
+  "source": null,
+  "task_checksum": "ac1487ea92bc4327067f7fcce5514e99c72cddcc22e97819c28bbfd93f964d8a",
+  "config": {
+    "task": {
+      "path": "42d756c8-abda-48ce-a4a1-5fc887d53386",
+      "git_url": null,
+      "git_commit_id": null,
+      "name": null,
+      "ref": null,
+      "overwrite": false,
+      "download_dir": null,
+      "source": null
+    },
+    "trial_name": "42d756c8-abda-48ce-a4a1-5fc887d5__3fjVL9F",
+    "trials_dir": "rekor-glm-20260923_000308",
+    "install_only": false,
+    "timeout_multiplier": 1.0,
+    "agent_timeout_multiplier": null,
+    "verifier_timeout_multiplier": null,
+    "agent_setup_timeout_multiplier": null,
+    "environment_build_timeout_multiplier": null,
+    "agent": {
+      "name": "openhands-sdk",
+      "import_path": null,
+      "model_name": "anthropic/glm-5.3",
+      "n_concurrent": null,
+      "concurrency_group": null,
+      "skills": [],
+      "override_timeout_sec": null,
+      "override_setup_timeout_sec": null,
+      "max_timeout_sec": null,
+      "resume_trajectory": false,
+      "load_trajectory": null,
+      "extra_allowed_hosts": [
+        "api.z.ai"
+      ],
+      "kwargs": {},
+      "mcp_servers": []
+    },
+    "user_agent": null,
+    "environment": {
+      "type": "docker",
+      "import_path": null,
+      "force_build": false,
+      "delete": true,
+      "cpu_enforcement_policy": "auto",
+      "memory_enforcement_policy": "auto",
+      "override_cpus": null,
+      "override_memory_mb": null,
+      "override_storage_mb": null,
+      "override_gpus": null,
+      "override_tpu": null,
+      "mounts": null,
+      "extra_docker_compose": [],
+      "kwargs": {},
+      "extra_allowed_hosts": []
+    },
+    "verifier": {
+      "override_timeout_sec": null,
+      "max_timeout_sec": null,
+      "disable": false
+    },
+    "artifacts": [],
+    "extra_instruction_paths": [],
+    "extra_instructions": [],
+    "source_trial": null
+  },
+  "agent_info": {
+    "name": "openhands-sdk",
+    "version": "1.49.4",
+    "model_info": {
+      "name": "glm-5.3",
+      "provider": "anthropic"
+    }
+  },
+  "agent_result": {
+    "n_input_tokens": 1687783,
+    "n_cache_tokens": 1622272,
+    "n_output_tokens": 23810,
+    "cost_usd": 2.46766,
+    "model_usage": null,
+    "rollout_details": null,
+    "metadata": null
+  },
+  "verifier_result": {
+    "rewards": {
+      "reward": 0.54902,
+      "raw_reward": 0.54902,
+      "earned": 28.0,
+      "possible": 51
+    },
+    "scoring": "pytest_and_rubric_mean",
+    "scores": {
+      "pytest_score": 0.54902,
+      "rubric_score": 0.568182,
+      "avg_score": 0.558601
+    },
+    "stages": {
+      "stage1": "passed",
+      "stage2": "passed",
+      "stage3": "passed",
+      "stage4": "failed"
+    },
+    "stage4_gate": "disabled"
+  },
+  "verifier_environment_mode": "shared",
+  "exception_info": null,
+  "started_at": "2026-09-22T18:33:10.944300Z",
+  "finished_at": "2026-09-22T18:42:44.129452Z",
+  "environment_setup": {
+    "started_at": "2026-09-22T18:33:11.004080Z",
+    "finished_at": "2026-09-22T18:33:38.146759Z"
+  },
+  "agent_setup": {
+    "started_at": "2026-09-22T18:33:38.147068Z",
+    "finished_at": "2026-09-22T18:34:12.775578Z"
+  },
+  "agent_execution": {
+    "started_at": "2026-09-22T18:34:12.776190Z",
+    "finished_at": "2026-09-22T18:42:21.330616Z"
+  },
+  "verifier": {
+    "started_at": "2026-09-22T18:42:22.712878Z",
+    "finished_at": "2026-09-22T18:42:31.037888Z"
+  },
+  "step_results": null
+}

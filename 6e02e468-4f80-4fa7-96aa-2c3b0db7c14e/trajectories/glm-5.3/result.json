@@ -1,0 +1,143 @@
+{
+  "id": "95ff1fc5-f5ca-45d6-b95d-637e61a88535",
+  "task_name": "ethara/sqlite3-cve-2024-0232",
+  "trial_name": "6e02e468-4f80-4fa7-96aa-2c3b0db7__ZohF37o",
+  "trial_uri": "sqlite-glm-run1/6e02e468-4f80-4fa7-96aa-2c3b0db7__ZohF37o",
+  "task_id": {
+    "path": "6e02e468-4f80-4fa7-96aa-2c3b0db7c14e"
+  },
+  "source": null,
+  "task_checksum": "1d4d894ad14b1b7d5eba94741cd83c36ecbeba4d78749b5460d120dcdb8c3cce",
+  "config": {
+    "task": {
+      "path": "6e02e468-4f80-4fa7-96aa-2c3b0db7c14e",
+      "git_url": null,
+      "git_commit_id": null,
+      "name": null,
+      "ref": null,
+      "overwrite": false,
+      "download_dir": null,
+      "source": null
+    },
+    "trial_name": "6e02e468-4f80-4fa7-96aa-2c3b0db7__ZohF37o",
+    "trials_dir": "sqlite-glm-run1",
+    "install_only": false,
+    "timeout_multiplier": 1.0,
+    "agent_timeout_multiplier": null,
+    "verifier_timeout_multiplier": null,
+    "agent_setup_timeout_multiplier": null,
+    "environment_build_timeout_multiplier": null,
+    "agent": {
+      "name": "openhands-sdk",
+      "import_path": null,
+      "model_name": "anthropic/glm-5.3",
+      "n_concurrent": null,
+      "concurrency_group": null,
+      "skills": [],
+      "override_timeout_sec": null,
+      "override_setup_timeout_sec": null,
+      "max_timeout_sec": null,
+      "resume_trajectory": false,
+      "load_trajectory": null,
+      "extra_allowed_hosts": [
+        "api.z.ai"
+      ],
+      "kwargs": {},
+      "mcp_servers": []
+    },
+    "user_agent": null,
+    "environment": {
+      "type": "docker",
+      "import_path": null,
+      "force_build": false,
+      "delete": true,
+      "cpu_enforcement_policy": "auto",
+      "memory_enforcement_policy": "auto",
+      "override_cpus": null,
+      "override_memory_mb": null,
+      "override_storage_mb": null,
+      "override_gpus": null,
+      "override_tpu": null,
+      "mounts": null,
+      "extra_docker_compose": [],
+      "kwargs": {},
+      "extra_allowed_hosts": [
+        "ports.ubuntu.com",
+        "archive.ubuntu.com",
+        "security.ubuntu.com",
+        "astral.sh",
+        "*.astral.sh",
+        "github.com",
+        "*.githubusercontent.com",
+        "pypi.org",
+        "files.pythonhosted.org"
+      ]
+    },
+    "verifier": {
+      "override_timeout_sec": null,
+      "max_timeout_sec": null,
+      "disable": false
+    },
+    "artifacts": [],
+    "extra_instruction_paths": [],
+    "extra_instructions": [],
+    "source_trial": null
+  },
+  "agent_info": {
+    "name": "openhands-sdk",
+    "version": "1.49.4",
+    "model_info": {
+      "name": "glm-5.3",
+      "provider": "anthropic"
+    }
+  },
+  "agent_result": {
+    "n_input_tokens": 8122923,
+    "n_cache_tokens": 8003776,
+    "n_output_tokens": 44807,
+    "cost_usd": 11.569243,
+    "model_usage": null,
+    "rollout_details": null,
+    "metadata": null
+  },
+  "verifier_result": {
+    "rewards": {
+      "reward": 1.0,
+      "earned": 30,
+      "positive_total": 30,
+      "reproducer_gate_withheld": 0,
+      "pytest_score": 1.0,
+      "rubric_score": 1.0,
+      "avg_score": 1.0,
+      "scoring": "pytest_and_rubric_mean",
+      "binary_stages": {
+        "stage1_poc_crashes_vuln": true,
+        "stage2_agent_poc_neutralized": true,
+        "stage3_project_suite_passes": true,
+        "stage4_heldout_poc_neutralized": true
+      },
+      "judge": "human-evaluated"
+    }
+  },
+  "verifier_environment_mode": "shared",
+  "exception_info": null,
+  "started_at": "2026-09-22T21:11:50.171227Z",
+  "finished_at": "2026-09-22T21:56:40.348589Z",
+  "environment_setup": {
+    "started_at": "2026-09-22T21:11:50.180657Z",
+    "finished_at": "2026-09-22T21:11:59.839787Z"
+  },
+  "agent_setup": {
+    "started_at": "2026-09-22T21:11:59.840015Z",
+    "finished_at": "2026-09-22T21:13:09.808332Z"
+  },
+  "agent_execution": {
+    "started_at": "2026-09-22T21:13:09.809026Z",
+    "finished_at": "2026-09-22T21:52:47.325266Z"
+  },
+  "verifier": {
+    "started_at": "2026-09-22T21:52:48.903350Z",
+    "finished_at": "2026-09-22T21:56:33.501684Z"
+  },
+  "step_results": null
+}

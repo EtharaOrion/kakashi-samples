@@ -1,0 +1,21 @@
+{
+  "reward": 1.0,
+  "pytest_score": 1.0,
+  "rubric_score": 1.0,
+  "avg_score": 1.0,
+  "scoring": "pytest_and_rubric_mean",
+  "rubric_trials": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "binary_stages": {
+    "stage1_poc_crashes_vuln": true,
+    "stage2_agent_poc_neutralized": true,
+    "stage3_project_suite_passes": true,
+    "stage4_heldout_poc_neutralized": true
+  },
+  "skipped": false,
+  "_note": "reward = (pytest_score + rubric_score)/2 per Harness/run_harbor.py:1463.",
+  "judge": "human-evaluated"
+}

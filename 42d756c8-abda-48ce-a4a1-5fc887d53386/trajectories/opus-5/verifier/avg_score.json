@@ -1,0 +1,36 @@
+{
+  "avg_score": 0.388369,
+  "reward": 0.388369,
+  "raw_reward": 0.117647,
+  "pytest_score": 0.117647,
+  "rubric_score": 0.659091,
+  "scoring": "pytest_and_rubric_mean",
+  "binary_stages": {
+    "stage1": true,
+    "stage2": null,
+    "stage3": null,
+    "stage4": null
+  },
+  "stages": {
+    "stage1": "passed",
+    "stage2": "skipped",
+    "stage3": "skipped",
+    "stage4": "skipped"
+  },
+  "required_stages": [
+    "stage1",
+    "stage2",
+    "stage3",
+    "stage4"
+  ],
+  "stage4_gate": "not_applied",
+  "earned": 6.0,
+  "possible": 51,
+  "skipped": false,
+  "skip_reason": null,
+  "_note": "avg = (pytest_score + rubric_score)/2. stage-4 gate NOT APPLIED: oracle.json records stage4 as null (ungradeable) rather than false, because the patch did not apply to a restored tree, so stages 2-4 never ran and the deterministic channel is left ungated. pytest_score is the RAW ungated weighted verifier reward (6/51) from reward.json, independently recomputed from ctrf.json against tests/test_weights.json. rubric_score is the authoritative rubric evaluation.",
+  "_oracle_notes": [
+    "patch did not apply to a restored tree"
+  ],
+  "judge": "human-evaluated"
+}

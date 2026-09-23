@@ -1,0 +1,69 @@
+diff -ru '--exclude=.git' /tmp/tmp.UlW5Dj39nQ/sqlite3/src/json.c /src/sqlite3/src/json.c
+--- a/src/json.c
++++ b/src/json.c
+@@ -2695,8 +2695,15 @@
+   if( pX==0 ) return;
+   assert( pX->hasMod==0 );
+   pX->hasMod = 1;
++  /* Hold a reference to pX across the jsonParseCached() call below.  That
++  ** call might evict pX from the parse cache, which would otherwise free
++  ** it while it is still in use. */
++  pX->nJPRef++;
+   pY = jsonParseCached(ctx, argv[1], ctx, 1);
+-  if( pY==0 ) return;
++  if( pY==0 ){
++    jsonParseFree(pX);
++    return;
++  }
+   pX->useMod = 1;
+   pY->useMod = 1;
+   pResult = jsonMergePatch(pX, 0, pY->aNode);
+@@ -2708,6 +2715,7 @@
+   }else{
+     sqlite3_result_error_nomem(ctx);
+   }
++  jsonParseFree(pX);
+ }
+ 
+ 
+@@ -2900,6 +2908,11 @@
+   }
+   pParse = jsonParseCached(ctx, argv[0], ctx, argc>1);
+   if( pParse==0 ) return;
++  /* Hold a reference to pParse across the edits below.  jsonReplaceNode()
++  ** can call jsonParseCached() to obtain the parse of a JSON-valued
++  ** argument, and that call might evict pParse from the parse cache,
++  ** which would otherwise free it while it is still in use. */
++  pParse->nJPRef++;
+   for(i=1; i<(u32)argc; i+=2){
+     zPath = (const char*)sqlite3_value_text(argv[i]);
+     pParse->useMod = 1;
+@@ -2912,6 +2925,7 @@
+   jsonReturnJson(pParse, pParse->aNode, ctx, 1);
+ replace_err:
+   jsonDebugPrintParse(pParse);
++  jsonParseFree(pParse);
+ }
+ 
+ 
+@@ -2946,6 +2960,11 @@
+   }
+   pParse = jsonParseCached(ctx, argv[0], ctx, argc>1);
+   if( pParse==0 ) return;
++  /* Hold a reference to pParse across the edits below.  jsonReplaceNode()
++  ** can call jsonParseCached() to obtain the parse of a JSON-valued
++  ** argument, and that call might evict pParse from the parse cache,
++  ** which would otherwise free it while it is still in use. */
++  pParse->nJPRef++;
+   for(i=1; i<(u32)argc; i+=2){
+     zPath = (const char*)sqlite3_value_text(argv[i]);
+     bApnd = 0;
+@@ -2964,7 +2983,7 @@
+   jsonReturnJson(pParse, pParse->aNode, ctx, 1);
+ 
+ jsonSetDone:
+-  /* no cleanup required */;
++  jsonParseFree(pParse);
+ }
+ 
+ /*

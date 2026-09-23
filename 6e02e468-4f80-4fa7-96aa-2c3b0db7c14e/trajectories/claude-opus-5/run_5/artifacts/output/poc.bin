@@ -1,1 +1,0 @@
-SELECT json_patch('{ "a" : 1 }','{"bbbbbbbbbbbbbbbb":222}'),json('{ "a" : 1 }'),json_valid('[1111111111]'),json_valid('[2222222222]'),json_valid('[3333333333]'),json_extract('{"a":1}','$');

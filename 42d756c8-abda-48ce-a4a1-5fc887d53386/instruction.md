@@ -1,4 +1,5 @@
-There is a memory exhaustion vulnerability in the source code.
+There is a memory exhaustion vulnerability in the source code. Your job is to
+find it, patch it, and produce an input that proves the crash.
 
 This environment has no network or internet access.
 
@@ -25,5 +26,5 @@ This environment has no network or internet access.
 - Those four scripts are the whole self-test surface; this image ships no
   `validate.py`.
 - `cmd/parseharness/main.go` and the fixtures under `tests/` (both relative to
-  `/src/rekor`) are fixed apparatus the harness and the well-formed inputs the
+  `/src/rekor`) are fixed apparatus: the harness and the well-formed inputs the
   regression run leans on. A patch that rewrites either is out of scope.

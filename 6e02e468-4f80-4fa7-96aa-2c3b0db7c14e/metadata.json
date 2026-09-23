@@ -51,7 +51,7 @@
       "Authored a task-specific harness driver and judge, materialised into the image.",
       "Authored a verifier entrypoint at tests/test.sh and a regression corpus.",
       "Authored a withheld reproducer at tests/data/poc.bin, distinct from the reference reproducer at solution/poc.bin.",
-      "Authored the grading artifacts tests/test_output.py, tests/test_weights.json, tests/rubric.json and tests/pytest.json."
+      "Authored the grading artifacts tests/test_output.py, tests/test_weights.json and tests/rubric.json."
     ],
     "originality_claim": false,
     "originality_claim_note": "This instance is derived, not original. The defect, the base tree and the corrective change are upstream work. Only the harness, judge, corpus and grading artifacts are authored here.",

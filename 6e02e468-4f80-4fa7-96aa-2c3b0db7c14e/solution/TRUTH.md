@@ -107,8 +107,8 @@ grade time so it cannot be copied.
 
 | | Path | Bytes | sha256 |
 |---|---|---|---|
-| Reference | `solution/poc.bin` | 118 | `a8ea18eed0cc9e42203133bb709ed61c721bbc0a51b0ebfd05463450b19d8f6c` |
-| Withheld | `tests/data/poc.bin` | 139 | `05bfd7c41eb76979535431b196b2da373e759d57d321a46c6004a5353b6cbbd3` |
+| Reference | `solution/poc.bin` | 120 | `f892b08af91ba01a6b87ab67b284d89d02eace9f2900938bed44a8d3ba9d7d8f` |
+| Withheld | `tests/data/poc.bin` | 141 | `995bf79915115b0f1344ade61b81610c8efbf898fa2818d4746d68a9cfb2a720` |
 | Generated | `_deep_chain()` in `tests/test_output.py` | 1669 | built in code, 62 replacement pairs |
 
 None of the three is staged in the image. This is an e2e task: the agent is given
@@ -124,16 +124,24 @@ so are the two harness scripts the oracle executes.
 
 ### Shape
 
-All three are one line of ASCII, LF only, no trailing newline:
+The two files each begin with a two-byte selector prefix, `0x00 0x0a` (a NUL
+selector byte then LF); the leading NUL is what makes them binary, so `file`
+reports `data` rather than text. After the prefix comes one line of SQL, no
+trailing newline. The statement the reference file carries is:
 
 ```
 SELECT json_set('{}','$.a',json('1'),'$.a',json('2'),'$.b',json('3'),
                      '$.b',json('4'),'$.c',json('5'),'$.c',json('6'));
 ```
 
-The harness (`test/ossfuzz.c`) consumes the whole file as statement text: a
-selector byte is stripped only when byte 1 is `\n`, and byte 1 here is `E`, so
-none of the input is eaten. That is why all three files are newline-free.
+The harness (`test/ossfuzz.c`) strips a selector byte only when byte 1 is `\n`.
+For the two files byte 1 is the LF, so ossfuzz consumes `0x00 0x0a` as the
+selector and runs everything after it; the SQL it executes is byte-identical to
+the same statement with no prefix. The selector's bits (foreign-key enable, an
+output-row cap) never reach the JSON code path, so the NUL selector is a
+lifetime-neutral wrapper — it changes how `file` classifies the bytes, nothing
+the fault depends on. The generated input carries no prefix: its byte 1 is `E`,
+so ossfuzz falls back to the default `0xfd` selector and runs the whole text.
 
 Six `json(...)` sub-calls is the load-bearing count. Each is distinct text, so
 each misses the cache and takes a slot; with `JSON_CACHE_SZ` at 4 and one slot
@@ -289,8 +297,21 @@ sum(positive weights)`, clamped to `[-1, 1]`. The ten positive weights in
 `tests/test_weights.json` total **30**. The six penalties total **-28** and are
 subtracted only when the violation each one names is present.
 
-The rows below are the arithmetic the scorer materialised by `tests/test.sh`
-performs, applied to the stage verdicts recorded in section 2.
+Two adjustments sit on top of that normalisation, both in the scorer materialised
+by `tests/test.sh`. The **repair floor** keeps a submission that passes the three
+DECISIVE tests from scoring below the zero an empty submission gets. The
+**reproducer gate** withholds the credit of `..._ground_truth_poc_neutralized_by_patch`
+and `..._patched_deep_chain_neutralized` when `test_agent_poc_crashes_vuln_build`
+reports FAILED: both replay oracle-owned inputs, but both are weighted as proof
+the repair reaches past the input the agent reproduced with, and with no such
+input in evidence they measure a patch against fixed oracle inputs instead. The
+denominator stays 30, the regression and patch-shape tests are not gated, and
+ERROR / SKIPPED / MISSING leave the gate unapplied so a verifier-side fault
+cannot confiscate credit. A correct patch with no reproducer scores 9/30 = 0.300.
+
+The rows below are the arithmetic that scorer performs, applied to the stage
+verdicts recorded in section 2. The reference submission passes stage 1, so
+neither adjustment changes its total.
 
 ### Reference submission
 
@@ -312,12 +333,12 @@ performs, applied to the stage verdicts recorded in section 2.
 | the six negative-weight tests | -28 | none hold | 0 |
 | **total** | | | **30 / 30 = 1.000** |
 
-### Submissions that repair nothing
+### Submissions short of the reference
 
 | Submission | Banked | Reward |
 |---|---|---|
 | an empty `/output` | 0 | 0.000 |
-| a cosmetic in-tree diff plus a non-faulting input | +9 | 0.300 |
+| the same correct patch, no reproducer submitted | +9 | 0.300 |
 | the reference patch with the withheld input handed back | +14 | 0.467 |
 | `JSON_CACHE_SZ` widened in place of a lifetime fix | +25 | 0.833 |
 
@@ -327,17 +348,21 @@ absent submission is a failure to attempt which the ten positive-weight tests
 already score at zero. Penalising it twice would drive an empty submission below
 zero and put this reward table in conflict with the empty-submission screening
 atom, which requires an empty submission to score exactly zero. Measured in the
-pinned image: every graded target unresolved, reward 0.000. The second is the
-form-only credit (a patch on disk, applying, staying under `src/`, an input on
-disk) plus stage 2, which any input that runs clean satisfies without ever
-reaching the defect; stage 1 withholds the matching 5, because that same input
-has to fault the unmodified build. The third loses all three stages that read
+pinned image: every graded target unresolved, reward 0.000. The second is a
+genuine repair submitted with no reproducer: the patch-shape credit (a patch on
+disk, applying, staying under `src/`) plus stage 3 and the preserved-results
+check, both gated on the held-out input running clean, which only a real fix
+satisfies. Stage 1 and stage 2 each read the agent's own reproducer and there is
+none, so both are lost, while stage 4 and the deep-chain credit are withheld by
+the reproducer gate. The third loses all three stages that read
 the agent's own input and takes the copy penalty. The fourth is the cache
 widening described in section 8: it clears every stage, so the diff-reading
 guard is the whole of what separates it from a repair.
 
-The floor a submission can reach without repairing anything is therefore 0.300,
-and every path above it costs a penalty.
+The floor a genuine repair reaches without submitting a reproducer is therefore
+0.300; a submission that repairs nothing cannot clear the repair-gated stage 3
+and preserved-results checks, so it stays at the patch-shape credit, about
+4/30 = 0.133.
 
 ---
 
@@ -373,11 +398,3 @@ tree with no repository at all: there is no .git, no object database, no reflog,
 
 These are inert while `allow_internet = false`, which is declared in `task.toml`
 and verified. Confirm egress is blocked before scoring.
-
----
-
-Canary slot for the private-boundary leak gate. This token is derived from the
-canary-normalized canonical bundle hash and must never appear on the agent-visible
-surface. Its presence there would mean this file reached the agent.
-
-<<CANARY:truth:d8e8c36fa72fb3788b6defddc9fa35cd7a6b9785f4ad108a186b52e0c80187f9>>

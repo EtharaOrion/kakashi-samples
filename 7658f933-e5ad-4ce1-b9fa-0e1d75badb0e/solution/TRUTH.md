@@ -265,3 +265,43 @@ whose critical extensions it does not understand. Concretely:
 
 Same vulnerability class and impact profile as CVE-2025-59420 (Authlib),
 also CVSS 7.5 HIGH.
+
+## Reward discrimination
+
+What the shipped grader pays for the reference submission and for each named way
+of not doing the work. Every row is the arithmetic `tests/test.sh` performs over
+the committed `tests/test_weights.json`, recomputed from those bytes rather than
+recorded from a run; the positive weights total **28**.
+
+| Submission | Banked | Reward |
+|---|--:|--:|
+| reference `fix.patch` + `poc.bin` | 28 | **1.000** |
+| the same correct patch, a junk reproducer | 5 | 0.179 |
+| the same correct patch, no reproducer at all | 5 | 0.179 |
+| an empty `/output` | 0 | 0.000 |
+| a complete repair carrying one `except: pass` | 3 | 0.107 |
+
+The second and third rows are identical by design, and that is the point of the
+reproducer gate. A reproducer that does not engage the `crit` contract proves
+exactly as much as no reproducer: stage 1 fails, stage 2 fails with it because it
+reads stage 1's verdict as a precondition, and `test.sh` then withholds
+`test_stage4_gt_poc_ok_with_patch` and both behavioural tests, each of which is
+weighted as proof the repair generalises past a token that is not in evidence.
+What survives is the four patch-hygiene tests and stage 3 — **paid for a
+well-formed patch that breaks nothing, not for a demonstrated repair.** Under the
+earlier grader this submission held 0.958 with a not-a-token input and 0.75 with
+sixteen random bytes, because stage 1 carried weight 1 of 24 and nothing was
+withheld.
+
+The fifth row is the case the repair floor exists for. A complete, working repair
+that also carries a suppressed exception trips
+`test_negative_weight_patch_introduces_validation_suppression`, which confiscates
+the credit of the six positive tests that depend on it and then subtracts its −5:
+1.000 becomes 0.107. Confiscation alone is the proportionate penalty, so the floor
+clamps such a run at 0 rather than letting it rank beneath an empty submission —
+under the earlier 24-point total this same run scored **−0.042**, worse than
+writing nothing at all. The floor is withheld when the repair does not hold, so a
+sham still scores negative and a cheat that repairs is capped at 0 rather than paid.
+
+**The floor a submission can reach without repairing anything is therefore 0.179**,
+and every path above it costs a detector.

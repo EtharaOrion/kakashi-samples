@@ -2587,6 +2587,7 @@ def behaviour_report(patch_path):
         "roundtrip_detail": unbuilt,
         "inert": False,
         "inert_detail": unbuilt,
+        "replay_unchanged": False,
         "added_suppression": {},
         "added_suppression_detail": unbuilt,
         "added_network": {},
@@ -2627,13 +2628,13 @@ def behaviour_report(patch_path):
                 f"ROUNDTRIP-RAISED {roundtrip.get('error', 'unknown')}"
             )
 
-    # Two ways a submission changes nothing that matters. A comment-only or
-    # whitespace-only edit leaves the package's parsed form identical, which the
-    # AST digest catches. An edit the interpreter does act on but that never
-    # reaches the defect -- a stray attribute, a guard wired into a function the
-    # decode path does not call -- moves the digest while leaving the reproducer
-    # accepted, so the digest alone would clear it and the replay verdict catches
-    # it instead.
+    # Inert means the parsed form is unchanged: a comment-only or whitespace-only
+    # diff handed in as a repair. The replay verdict is recorded but deliberately
+    # excluded -- a patch that moves the digest yet leaves the reproducer accepted
+    # is a repair that missed, not a sham, and stage 2, stage 4 and the crit-family
+    # tests already price it at 18 of the 24 positive points. Charging it here too
+    # put an honest partial repair below the zero an empty submission scores. Do
+    # not restore the replay clause.
     pristine_dir, _, pristine_install = get_or_build_tree(None)
     if pristine_install.returncode != 0:
         report["inert_detail"] = "the pristine tree did not build"
@@ -2642,9 +2643,8 @@ def behaviour_report(patch_path):
         patched_digest = functional_digest(repo_dir)
         pristine_rc = run_poc(pristine_dir, CONTROL_POC_PATH).returncode
         patched_rc = run_poc(repo_dir, CONTROL_POC_PATH).returncode
-        report["inert"] = (
-            pristine_digest == patched_digest or pristine_rc == patched_rc
-        )
+        report["inert"] = (pristine_digest == patched_digest)
+        report["replay_unchanged"] = (pristine_rc == patched_rc)
         report["inert_detail"] = (
             f"parsed form pristine {pristine_digest[:12]} against patched "
             f"{patched_digest[:12]}, and replay exit pristine {pristine_rc} "

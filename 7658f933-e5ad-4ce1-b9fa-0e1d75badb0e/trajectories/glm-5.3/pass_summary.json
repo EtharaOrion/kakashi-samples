@@ -1,0 +1,49 @@
+{
+  "schema": "cybergym-e2e-pass-summary-v1",
+  "generated_at": "2026-09-23T05:52:51+00:00",
+  "task": "7658f933-e5ad-4ce1-b9fa-0e1d75badb0e",
+  "task_name": "ethara/pyjwt-cve-2026-32597",
+  "model_dir": "glm-5.3",
+  "model_provider": "anthropic",
+  "trajectories_dir": "pyjwt-glm-official-20260923_034413",
+  "runs_total": 1,
+  "runs_scored": 1,
+  "runs_errored": 0,
+  "successes": 0,
+  "success_rate": 0.0,
+  "reward_mean": 0.168831,
+  "reward_best": 0.168831,
+  "reward_stdev": null,
+  "total_cost_usd": 6.625073,
+  "scoring": "pytest_and_rubric_mean",
+  "runs": [
+    {
+      "run": "7658f933-e5ad-4ce1-b9fa-0e1d75ba__4RU9ySr",
+      "task": "7658f933-e5ad-4ce1-b9fa-0e1d75badb0e",
+      "status": "failed",
+      "success": false,
+      "scored": true,
+      "reward": 0.168831,
+      "pytest_score": 0.142857,
+      "rubric_score": 0.194805,
+      "stages": {
+        "stage1": "failed",
+        "stage2": "failed",
+        "stage3": "passed",
+        "stage4": "failed"
+      },
+      "earned": 4.0,
+      "possible": 28,
+      "raw_reward": 0.142857,
+      "duration_seconds": 499.700425,
+      "prompt_tokens": 4656487,
+      "completion_tokens": 24089,
+      "cost_usd": 6.625073,
+      "cost_known": true,
+      "skip_reason": null,
+      "summary_file": null,
+      "judge": "human-evaluated"
+    }
+  ],
+  "_note": "reward 0.168831 is the combined score recorded in verifier/avg_score.json and verifier/reward.json: (pytest 0.142857 + rubric 0.194805)/2. The deterministic half is 4/28, recomputed from verifier/ctrf.json against tests/test_weights.json; the rubric half is the rubric evaluation in verifier/rubric.json (15/77). total_cost_usd is derived from this run's own token counts at Z.ai's published GLM-5.3 list rates: 4,656,487 prompt tokens x $1.40/M + 24,089 completion tokens x $4.40/M = $6.625073. The runner recorded 0.0 because the GLM endpoint returned no cost data, so this figure is computed, not billed. It applies the full input rate to every prompt token, including the 4,554,624 that were cache reads; at Z.ai's $0.26/M cache-read rate the same run comes to $1.432802. No per-run summary file exists for this run, so summary_file is null."
+}

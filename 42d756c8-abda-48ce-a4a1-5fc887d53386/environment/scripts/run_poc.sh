@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # harness: /out/parseharness
-# Runs one input under a fixed resource budget and reports a verdict.
+# Runs one input and reports a verdict.
 #   0  handled      the harness ran to completion
 #   1  failed       the run died on a runtime abort
 #   2  inconclusive the harness is missing, or the input is unreadable

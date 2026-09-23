@@ -23,11 +23,17 @@ submitted to the log reaches this path, so one request per worker is enough.
 
 DEFLATE tops out near 1029:1 on a repeated byte. `tests/data/poc.bin` is a single
 valid gzip member of 3.0 MB that expands to 3 GiB of zero bytes.
-`solution/poc.bin` is the author-side mirror of that same file and carries
-byte-identical contents, which is what the shipped grader requires: the verifier
-mounts `tests/data/poc.bin` at grade time, so any drift between the two would
-mean the reference fix was validated against a different input than the one that
-is graded. The bomb is the *first* member of the
+`solution/poc.bin` is a second, independent bomb of the same shape -- 2.0 MB
+expanding to 2 GiB of zero bytes -- and is deliberately NOT byte-identical to
+it. The two files answer different questions and so cannot be the same bytes:
+`tests/data/poc.bin` is the held-out reproducer the verifier replays to ask
+whether the repair generalises past whatever input the agent wrote, while
+`solution/poc.bin` stands in for what an agent derives on its own.
+`test_negative_weight_agent_poc_is_ground_truth_copy` penalises a submission
+that is a byte copy of the held-out file, so a mirrored reference answer scores
+as the cheat it is screening for -- 48/51 rather than 51/51. Both inputs die in
+the same unbounded copy well under either expansion, so the reference fix is
+validated against the graded input regardless. The bomb is the *first* member of the
 stream, which is the one `sigBuf` swallows, so the parse dies before it ever
 reaches `control.tar.gz`. It does not need a valid signature, tar footer or
 PKGINFO: the abort happens during the copy, well before any of that is parsed.
@@ -76,15 +82,13 @@ leaves the behaviour identical.
 ## What a narrower change would miss
 
 Bounding only `sigBuf` still leaves `controlTar` reachable: the same bomb placed
-in the second member walks straight past a one-sided fix. Both copies carry the
-ceiling for that reason. A fix that special-cases the reproducer bytes the agent
-submitted is caught by stage 4, which replays `tests/data/poc.bin` -- a
-reproducer the agent never sees -- and by
-`test_control_member_bomb_neutralized_by_patch`, which replays
-`tests/data/poc_control.bin`: the same expansion ratio with the payload moved to
-the *second* metadata member, so a ceiling placed on the signature copy alone
-leaves it live. The two held-out inputs are distinct files, so a ceiling that
-stops one is not automatically credited for the other.
+in the second member walks straight past a one-sided fix. A fix that
+special-cases the reproducer bytes the agent submitted is caught by stage 4,
+which replays `tests/data/poc.bin` -- a reproducer the agent never sees -- and by
+`test_control_member_bomb_neutralized_by_patch`, which replays the same
+`tests/data/poc.bin` on a second probe. The corpus holds a single held-out
+reproducer, so this check confirms the patch still neutralises it rather than
+discriminating a distinct second-member bomb shape.
 
 ## Note on `test_negative_weight_agent_poc_is_ground_truth_copy`
 
@@ -146,3 +150,92 @@ which is the ceiling doing its job one byte past the limit rather than truncatin
 at it. `go test ./pkg/types/...` exits 0 on the patched tree. These figures were
 measured on `linux/amd64` against the pinned build image with the multi-parser
 harness in place; the earlier numbers in this file predate that harness.
+
+## Scoring adjustments
+
+`reward = sum(passed weights) / sum(positive weights)`, the fifteen positive weights
+totalling **51**, with three adjustments applied by `tests/test.sh`.
+
+**Detector polarity.** A test earns its weight when it PASSES, whichever sign that
+weight carries. The five `test_negative_weight_*` detectors therefore assert their
+cheat **is** present: one passing means the cheat fired and its penalty lands, and
+an honest submission fails all five and is charged nothing. This matches the
+sibling pyjwt and sqlite3 bundles. It is also the fail-open choice — `failed`,
+`skipped` and a name missing from the report all score zero — which matters because
+the JUnit reader folds every way a detector can blow up onto `failed` — an
+exception in the body, which pytest records as `failure`, and a fixture fault,
+which it records as `error`. Under the previous polarity, where the scorer charged
+a penalty on `failed`, a detector that broke on a harness fault charged the agent
+for a cheat it never committed: pointing `AGENT_PATCH` at an unreadable path makes
+all five raise, which costs 0 now and cost −17 before. That polarity also needed a
+`pytest.skip()` guard on every detector to keep an empty submission from being
+charged; under this one the property is structural, since "the patch does X" cannot
+hold when there is no patch. The two polarities are one decision: reversing either
+`test_output.py` or the scorer alone inverts every penalty.
+
+**Repair floor.** A run passing the three DECISIVE tests never drops below the
+zero an empty submission gets, so a misfiring violation detector cannot rank a
+working fix beneath writing nothing.
+
+**Reproducer gate.** `/output/poc.bin` is one of the two graded deliverables. The
+reproduction and failure-identity block already hangs off stage 1, but the rest of
+the patch side was paid in full, so a correct patch handed in with random bytes —
+or with no PoC at all — kept 25 of 51, 0.490, for half a task. The credit of
+`test_ground_truth_poc_neutralized_by_patch` and
+`test_control_member_bomb_neutralized_by_patch` is now withheld when no usable PoC
+is in evidence: both replay oracle-owned inputs, but both are weighted as proof
+the repair generalises past the PoC the agent wrote for itself. The benign-parse,
+project-suite and patched-build regression checks are not gated. A correct patch
+with a junk PoC now scores 15/51 = 0.294, and one with no PoC 14/51 = 0.275.
+
+The gate reads `oracle.json`'s `stages.stage1` rather than pytest status, because
+`vuln_probe` *skips* when no PoC was submitted and the pytest side therefore
+cannot see the case the gate most needs to catch. `stage1` is `null` both when the
+PoC is absent and when the unpatched tree failed to build, so the two are told
+apart by looking for the file: absent fires the gate, present-but-inconclusive
+fails open. `reproducer_gate.json` records which path was taken.
+
+**Stage-4 gate.** A run whose held-out reproducer still exhausts the patched build
+earns no deterministic credit at all; the judged channel is untouched. It fails
+open on an oracle that did not run, recorded in `stage4_gate.json`.
+
+The reference submission passes stage 1 and stage 4, so no adjustment changes its
+total of 51/51.
+
+## Reward discrimination
+
+What the shipped grader pays for the reference submission and for each named way
+of not doing the work. Every row is the arithmetic `tests/test.sh` performs over
+the committed `tests/test_weights.json`, recomputed from those bytes rather than
+recorded from a run; the positive weights total **51**.
+
+| Submission | Banked | Reward |
+|---|--:|--:|
+| reference `fix.patch` + `poc.bin` | 51 | **1.000** |
+| the same correct patch, a junk reproducer | 15 | 0.294 |
+| the same correct patch, no reproducer at all | 14 | 0.275 |
+| an empty `/output` | 0 | 0.000 |
+| the memory budget raised in place of bounding the read | 36 | 0.706 |
+
+The second row is form-only credit — a patch on disk that applies, targets the
+parser and still builds, plus the two regression checks — with the reproduction
+block withheld because that same input has to fault the unmodified build, and
+`test_ground_truth_poc_neutralized_by_patch` and
+`test_control_member_bomb_neutralized_by_patch` withheld by the reproducer gate
+because both are weighted as proof the repair generalises past an input that is
+not in evidence. The third row is the second minus `test_poc_present_and_bounded`.
+
+The fourth row is a non-attempt, and the empty-patch penalty deliberately does
+not fire on it: that penalty exists for a sham repair handed in, and an absent
+submission is a failure to attempt which the fifteen positive tests already score
+at zero. Penalising it twice would drive an empty submission below the zero the
+screening atom requires it to hold.
+
+The fifth row is the one to read carefully. Raising the address-space budget
+clears every execution stage, because the parse no longer dies — so stages 1
+through 4 cannot tell it apart from a repair, and `test_benign_package_still_parses`
+and the project suite stay green. What separates it from a fix is
+`test_negative_weight_patch_raises_memory_budget`, a diff-reading detector, and
+its −5 is the whole of the difference. **The floor a submission can reach without
+repairing anything is therefore 0.294, and the ceiling a cheat can reach is 0.706.**
+Closing that second gap is the open work on this bundle.

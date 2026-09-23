@@ -1,4 +1,4 @@
-# Harbor ENVIRONMENT for PyJWT / CVE-2026-32597 (mode: patch-only).
+# Harbor ENVIRONMENT for PyJWT / CVE-2026-32597 (mode: e2e).
 #
 # PyJWT is not an OSS-Fuzz project, so there is no upstream fuzzing image to
 # build from: this is a plain Python toolchain image with an editable install

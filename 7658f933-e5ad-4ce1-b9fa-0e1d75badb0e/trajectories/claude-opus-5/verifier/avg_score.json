@@ -1,0 +1,30 @@
+{
+  "avg_score": 0.186688,
+  "reward": 0.186688,
+  "pytest_score": 0.178571,
+  "rubric_score": 0.194805,
+  "earned": 5.0,
+  "possible": 28,
+  "scoring": "pytest_and_rubric_mean",
+  "rubric_trials": [
+    0.272727,
+    0.142857,
+    0.194805
+  ],
+  "stages": {
+    "stage1": "failed",
+    "stage2": "failed",
+    "stage3": "passed",
+    "stage4": "failed"
+  },
+  "required_stages": [
+    "stage1",
+    "stage2",
+    "stage3",
+    "stage4"
+  ],
+  "skipped": false,
+  "skip_reason": null,
+  "_note": "avg_score 0.186688 = (pytest 0.178571 + rubric 0.194805)/2, the value this run's verifier/reward.json already records. The deterministic half is 5/28 = 0.178571, recomputed from verifier/ctrf.json against tests/test_weights.json. The rubric half is the existing rubric evaluation in verifier/rubric.json (15/77), whose three trial scores are carried here as rubric_trials - not re-evaluated. This file replaces the run's former verifier/score.json, which carried the same scoring fields; that file's rubric block was identical to verifier/rubric.json, its tests array to verifier/ctrf.json, and its mode, status, required_stages and test_weights to result.json, so nothing unique was dropped.",
+  "judge": "human-evaluated"
+}

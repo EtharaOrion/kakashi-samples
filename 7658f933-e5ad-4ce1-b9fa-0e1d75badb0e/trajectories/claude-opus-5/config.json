@@ -1,0 +1,17 @@
+{
+  "task": {
+    "path": "7658f933-e5ad-4ce1-b9fa-0e1d75badb0e"
+  },
+  "trial_name": "7658f933-e5ad-4ce1-b9fa-0e1d75ba__rwzHrXa",
+  "trials_dir": "pyjwt-claude-pinned",
+  "agent": {
+    "name": "openhands-sdk",
+    "model_name": "anthropic/claude-opus-5",
+    "extra_allowed_hosts": [
+      "host.docker.internal"
+    ],
+    "kwargs": {
+      "reasoning_effort": "high"
+    }
+  }
+}

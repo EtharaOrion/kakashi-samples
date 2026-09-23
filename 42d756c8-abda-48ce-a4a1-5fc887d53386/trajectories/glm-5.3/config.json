@@ -1,0 +1,14 @@
+{
+  "task": {
+    "path": "42d756c8-abda-48ce-a4a1-5fc887d53386"
+  },
+  "trial_name": "42d756c8-abda-48ce-a4a1-5fc887d5__3fjVL9F",
+  "trials_dir": "rekor-glm-20260923_000308",
+  "agent": {
+    "name": "openhands-sdk",
+    "model_name": "anthropic/glm-5.3",
+    "extra_allowed_hosts": [
+      "api.z.ai"
+    ]
+  }
+}

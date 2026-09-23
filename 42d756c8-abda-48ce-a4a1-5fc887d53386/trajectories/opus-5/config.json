@@ -1,0 +1,17 @@
+{
+  "task": {
+    "path": "42d756c8-abda-48ce-a4a1-5fc887d53386"
+  },
+  "trial_name": "42d756c8-abda-48ce-a4a1-5fc887d5__CuJPC67",
+  "trials_dir": "rekor-oh-pass2-high",
+  "agent": {
+    "name": "openhands-sdk",
+    "model_name": "anthropic/claude-opus-5",
+    "extra_allowed_hosts": [
+      "host.docker.internal"
+    ],
+    "kwargs": {
+      "reasoning_effort": "high"
+    }
+  }
+}

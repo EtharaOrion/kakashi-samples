@@ -1,0 +1,27 @@
+{
+  "avg_score": 0.558601,
+  "pytest_score": 0.54902,
+  "rubric_score": 0.568182,
+  "scoring": "pytest_and_rubric_mean",
+  "binary_stages": {
+    "stage1": true,
+    "stage2": true,
+    "stage3": true,
+    "stage4": false
+  },
+  "required_stages": [
+    "stage1",
+    "stage2",
+    "stage3",
+    "stage4"
+  ],
+  "skipped": false,
+  "skip_reason": null,
+  "_note": "avg = (pytest_score + rubric_score)/2. stage-4 gate DISABLED per scoring policy: pytest_score is the RAW ungated weighted verifier reward (28/51). rubric_score is the authoritative rubric evaluation.",
+  "_rubric_history": {
+    "original": 0.590909,
+    "first_rerun": 0.545455,
+    "authoritative_rerun": 0.568182
+  },
+  "judge": "human-evaluated"
+}

@@ -1,0 +1,14 @@
+{
+  "task": {
+    "path": "7658f933-e5ad-4ce1-b9fa-0e1d75badb0e"
+  },
+  "trial_name": "7658f933-e5ad-4ce1-b9fa-0e1d75ba__4RU9ySr",
+  "trials_dir": "pyjwt-glm-official-20260923_034413",
+  "agent": {
+    "name": "openhands-sdk",
+    "model_name": "anthropic/glm-5.3",
+    "extra_allowed_hosts": [
+      "api.z.ai"
+    ]
+  }
+}

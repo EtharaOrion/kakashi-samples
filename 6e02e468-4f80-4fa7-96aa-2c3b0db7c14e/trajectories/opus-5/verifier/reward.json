@@ -1,0 +1,23 @@
+{
+  "reward": 0.452083,
+  "pytest_score": 0.466667,
+  "rubric_score": 0.4375,
+  "avg_score": 0.452083,
+  "scoring": "pytest_and_rubric_mean",
+  "skip_reason": null,
+  "stages_detail": {
+    "stage1": {
+      "status": "passed"
+    },
+    "stage2": {
+      "status": "passed"
+    },
+    "stage3": {
+      "status": "failed"
+    },
+    "stage4": {
+      "status": "failed"
+    }
+  },
+  "judge": "human-evaluated"
+}

@@ -6,30 +6,83 @@ artifacts = ["/output/poc.bin", "/output/fix.patch"]
 version = "1.0.0"
 uuid_v5 = "7658f933-e5ad-4ce1-b9fa-0e1d75badb0e"
 authors = [
-    { name = "sagar.agrahari", email = "sagar.agrahari@ethara.ai" },
-    { name = "umang.kumar", email = "umang.kumar@ethara.ai" },
+    { name = "Sagar Agrahari", email = "sagar.agrahari@ethara.ai" },
+    { name = "Pratham Shukla", email = "pratham.shukla@ethara.ai" },
+    { name = "Umang Kumar", email = "umang.kumar@ethara.ai" },
+    { name = "Panjak Kumar", email = "panjak.kumar1152@ethara.ai" },
+    { name = "Faiz Khan", email = "faiz.khan26@ethara.ai" },
+    { name = "Smriti Singh", email = "smriti.singh@ethara.ai" },
+    { name = "Madhushree Ray", email = "madhushree.ray1995@ethara.ai" },
+    { name = "Rajni Kant", email = "rajni.kant@ethara.ai" },
+    { name = "Krishna Kaushal", email = "krishna.Kaushal@ethara.ai" },  
 ]
-name = "ethara/kakashi-7658f933"
+name = "ethara/pyjwt-cve-2026-32597"
 description = "Discover, reproduce and repair PyJWT accepting a token naming an unsupported critical header extension (CVE-2026-32597)."
 keywords = ["security", "python", "authentication", "input-validation"]
 
 [metadata]
-difficulty = "Expert"
 category = "Security"
 subcategory = "Vulnerability repair"
 family = "real-binary-reproducer"
 tags = ["cve", "e2e", "python", "improper-authentication", "rfc-7515", "pyjwt"]
 
 [verifier]
+# derived: this bundle declares no external network for the verifier.
 network_mode = "no-network"
 timeout_sec = 900.0
-environment_mode = "shared"
+# Corrected from "shared", which described a posture this bundle never had:
+# run_harbor.run_verifier() already grades in a fresh container fed only the two
+# submitted artifacts, and tests/validate.py extracts its own pristine tree from
+# a base64 archive embedded in itself. No grading behaviour changes.
+environment_mode = "separate"
 
 [agent]
+# derived: the original declares no agent network access.
 network_mode = "no-network"
-timeout_sec = 3600.0
+# Corrected from 3600.0 to the bound the recorded rollouts ran under: all eight
+# carry timeout = 5400 and run3 ran 3908 s, so the smaller declaration would cut
+# that run off on re-run.
+timeout_sec = 5400.0
 
 [environment]
 build_timeout_sec = 900.0
-allow_internet = false
+# Setup phase needs internet to install the openhands-sdk agent harness
+# (apt curl/coreutils, uv, Python 3.12, openhands-sdk from PyPI). The agent
+# EXECUTION phase stays no-network above and is opened to the model endpoint only
+# via --allow-agent-host, so the anti-cheat posture during agent.run() is unchanged.
+# Migrated from the deprecated `allow_internet = true`, which schema 1.4 replaced
+# with `network_mode`; `public` is the explicit posture Harbor derives from it.
+network_mode = "public"
 mcp_servers = []
+
+[leak_gate]
+# Bound at sign-off so containment is graded under the domain this bundle
+# declared. The Dockerfile build context is environment/, so solution/ and
+# tests/ are outside it and cannot be COPYd into the image; this gate measures
+# that claim rather than restating it. Measured worst containment 0.0629.
+#
+# tests/validate.py IS private here, unlike the sibling sqlite3 bundle that
+# stages its validator into the image on purpose: this one embeds the pristine
+# source archive and BOTH reproducers as base64 inside itself, so it is the most
+# answer-bearing file in the bundle and the image never receives it.
+private_carriers = ["TRUTH.md", "solution/TRUTH.md", "solution/fix.patch", "solution/poc.bin", "solution/crash.log", "tests/validate.py"]
+agent_visible_roots = ["environment", "instruction.md"]
+ngram_width = 8
+normalization = "casefold; collapse all runs of non-alphanumeric to a single space; strip leading and trailing space"
+containment_threshold = 0.30
+measured_worst_containment = 0.0629
+
+[leak_gate.carrier_exclusions]
+"tests/test.sh" = "The verifier entrypoint. Not copied into the image and never seen by the agent, but it carries no answer content: it runs the oracle and applies the gates."
+"tests/test_output.py" = "The graded oracle. Not staged. It encodes which relations are graded rather than the answer to them, and the withheld reproducer it reads lives in tests/validate.py, which IS in the private set."
+"tests/test_weights.json" = "Test names and weights only, no answer content."
+"tests/rubric.json" = "The judged criteria. Criterion text describes what a correct answer must show, which is weaker than the answer itself."
+"solution/solve.sh" = "Publishes the two artifacts to /output and nothing else; it carries no answer content of its own."
+"tests/data/poc.bin" = "Not committed by this bundle. The held-out reproducer is base64-embedded in tests/validate.py instead, which IS in the private set."
+
+[verifier.robustness]
+# Trial counts bound by the bundle so the stability and flakiness relations have
+# an N the auditor did not choose. Kept small deliberately: each trial is a full
+# rebuild and re-grade.
+stability_trials = 2
+flakiness_trials = 2

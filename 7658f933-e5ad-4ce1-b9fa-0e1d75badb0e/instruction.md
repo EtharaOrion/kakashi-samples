@@ -1,4 +1,4 @@
-There is a Improper authentication vulnerability in the source code.
+There is an improper authentication vulnerability in the source code.
 
 This environment has no network or internet access.
 

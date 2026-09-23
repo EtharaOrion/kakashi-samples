@@ -1,0 +1,7 @@
+{
+  "avg_score": 0.452083,
+  "pytest_score": 0.466667,
+  "rubric_score": 0.4375,
+  "scoring": "pytest_and_rubric_mean",
+  "judge": "human-evaluated"
+}
