@@ -21,7 +21,8 @@ version = "1.0.0"
 keywords = ["security", "c", "use-after-free", "memory-safety", "e2e"]
 
 [agent]
-network_mode = "no-network"
+network_mode = "allowlist"
+allowed_hosts = ["api.anthropic.com", "api.z.ai"]
 timeout_sec = 5400
 workspace = "/root/workspace"
 
@@ -114,8 +115,10 @@ interleaved_output = true
 built_platforms = ["linux/amd64", "linux/arm64"]
 base_digest_amd64 = "sha256:8b4a73d83374b298a0a771eeec9a1d44ceff3416a678b7d7946303389d022aca"
 base_digest_arm64 = "sha256:2edbbc5dc405e9612ba3584ce95480277e3eb374407b5505fe26f17df77c7dbc"
-built_image_digest_arm64 = "sha256:09a49f4b1a92b7e0eac87cc7e4c5af1b7df7bc6aecf6a6c3149d2dfbb7597a93"
-built_image_digest_amd64 = ""
+built_image_digest_arm64 = "sha256:75b8023ecf223b6ae598ebb0f16d205e4efb36dace6f871ade4e2e9407af0f8b"
+built_image_digest_amd64 = "sha256:4d0ecde96142e5a2120b35eed4c2543af5a3f6f1e2e907bd61010dbf2b41deb0"
+built_image_digest_index = "sha256:b0155968598a0f679b237457b4a8f9b6c8500a763c73ca72baae33e8e8c49e0a"
+built_image_ref = "426628337772.dkr.ecr.ap-south-1.amazonaws.com/kakashi:sqlite3-cve-2024-0232"
 built_platform = "linux/arm64"
 built_from = "environment/Dockerfile at the pinned base digests"
-built_at = "2026-09-05"
+built_at = "2026-09-27"

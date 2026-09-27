@@ -222,5 +222,7 @@
   "perturbation_passed": true,
   "deployment_refusal": false,
   "deployment_refusal_note": "enforcement deferred until task_count > 50; see 5a waiver",
-  "judge": "human-evaluated"
+  "judge": "human-evaluated",
+  "evaluated_by": "smriti.singh@ethara.ai",
+  "evaluator": "Human"
 }

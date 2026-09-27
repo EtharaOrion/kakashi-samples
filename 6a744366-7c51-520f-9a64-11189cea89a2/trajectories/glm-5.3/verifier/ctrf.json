@@ -9,9 +9,7 @@
       "failed": 10,
       "pending": 0,
       "skipped": 0,
-      "other": 0,
-      "start": null,
-      "stop": null
+      "other": 0
     },
     "tests": [
       {

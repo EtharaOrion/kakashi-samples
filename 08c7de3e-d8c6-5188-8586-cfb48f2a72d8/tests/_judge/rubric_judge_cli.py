@@ -24,20 +24,6 @@ def _cut(value: float, dp: int = 2) -> float:
                                              rounding=ROUND_DOWN)
     )
 
-# Optional Headroom prompt compression, default OFF (see grader_compress.py).
-# grader_compress.py sits beside this file, which is not necessarily on
-# sys.path. A missing or broken module must never stop a trial being graded,
-# so the last fallback is an identity function rather than an error.
-try:
-    from grader_compress import compress_evidence  # type: ignore
-except ImportError:
-    sys.path.insert(0, str(Path(__file__).resolve().parent))
-    try:
-        from grader_compress import compress_evidence  # type: ignore
-    except ImportError:
-        def compress_evidence(model, text):  # type: ignore[misc]
-            return text
-
 _out_path: Path | None = None
 _token_out: Path | None = None
 
@@ -280,10 +266,9 @@ def _run_judge_http(
     criteria: list[dict], traj_ctx: str, final_ctx: str, wire: str, model: str
 ) -> list[dict]:
     """Grade over one HTTPS call to the chosen wire, with backoff on transient
-    failures. Only the trajectory goes through compression; the criteria and
-    final_ctx are the verdict contract and the artifact being judged."""
+    failures."""
     call = _TRANSPORTS[wire]
-    prompt = _judge_prompt(criteria, compress_evidence(model, traj_ctx), final_ctx)
+    prompt = _judge_prompt(criteria, traj_ctx, final_ctx)
     timeout = float(os.environ.get("JUDGE_HTTP_TIMEOUT", "600"))
 
     text, usage = "", {}

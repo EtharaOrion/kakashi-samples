@@ -37,13 +37,12 @@ RUN pip install --no-cache-dir \
 RUN useradd --create-home --uid 4242 --shell /usr/sbin/nologin qcbuild
 
 COPY . /tests
-# The rubric judge and its optional compressor travel in tests/_judge/ and are
-# staged by the COPY above at /tests/_judge/; test.sh invokes them by that path.
-# They use only the Python standard library (urllib over the HTTPS endpoint), so
+# The rubric judge travels in tests/_judge/ and is
+# staged by the COPY above at /tests/_judge/; test.sh invokes it by that path.
+# It uses only the Python standard library (urllib over the HTTPS endpoint), so
 # no new packages are installed. JUDGE_WIRE + the API key arrive from
 # [verifier.env]/Harbor at grade time; with no key the rubric channel is left
 # unscored and the reward falls back to the deterministic channel alone.
-ENV GRADER_HEADROOM_ENABLED=false
 RUN chmod +x /tests/test.sh
 
 WORKDIR /

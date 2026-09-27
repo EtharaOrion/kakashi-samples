@@ -46,7 +46,8 @@ file = "tests/rubric.json"
 channel_relation = "disjoint"
 
 [agent]
-network_mode = "no-network"
+network_mode = "allowlist"
+allowed_hosts = ["api.anthropic.com", "api.z.ai"]
 timeout_sec = 5400.0
 
 [environment]
@@ -72,3 +73,15 @@ measured_worst_containment = 0.0629
 [verifier.robustness]
 stability_trials = 2
 flakiness_trials = 2
+
+[environment.image]
+built_platforms = ["linux/amd64", "linux/arm64"]
+base_digest = "sha256:78387bc3881b8273120a12ebe6c1ab22b018ccc2c9adf565ae1ac9b536e184ea"
+base_digest_kind = "oci image index; resolves per-platform"
+built_image_digest_arm64 = "sha256:4a7766237981ed826d827345fee4d891c32c27417ea324adf8cdddbef6f1298d"
+built_image_digest_amd64 = "sha256:0ce47c624d856c9546c89e422fb72865d1f326308f9722727699550a30eaa011"
+built_image_digest_index = "sha256:d22e8b62ff241d14f199d01e9b8fc0b4e3771731480a590ab93b3143d70328fb"
+built_image_ref = "426628337772.dkr.ecr.ap-south-1.amazonaws.com/kakashi:pyjwt-cve-2026-32597"
+built_platform = "linux/arm64"
+built_from = "environment/Dockerfile at the pinned base digest"
+built_at = "2026-09-27"

@@ -70,13 +70,12 @@ RUN bash /opt/harness/scripts/compile.sh vulnerable
 # --------------------------------------------------------------------------- #
 RUN mkdir -p /output /logs/verifier /tests
 COPY . /tests
-# The rubric judge and its optional compressor travel in tests/_judge/ and are
-# staged by the COPY above at /tests/_judge/; test.sh invokes them by that
-# relative path. They use only the Python standard library (urllib over the
+# The rubric judge travels in tests/_judge/ and is
+# staged by the COPY above at /tests/_judge/; test.sh invokes it by that
+# relative path. It uses only the Python standard library (urllib over the
 # HTTPS endpoint), so no new packages are installed; ca-certificates is already
 # present on both base legs. JUDGE_WIRE + the API key arrive from
 # [verifier.env]/Harbor at grade time; with no key the rubric channel is left
 # unscored and the reward falls back to the deterministic channel alone.
-ENV GRADER_HEADROOM_ENABLED=false
 RUN chmod +x /tests/test.sh
 WORKDIR /
