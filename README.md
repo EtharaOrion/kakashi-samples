@@ -111,7 +111,7 @@ stages above.
 | sqlite3 | glm-5.3 | ✓ | ✓ | ✓ | ✓ | **1.000** | **passed** | 11.57 |
 | sqlite3 | opus-5 | ✓ | ✓ | ✗ | ✗ | 0.447 | failed | 7.51 |
 
-Only the **sqlite3 / glm-5.3** run clears all four stages (human-evaluated). The **rekor /
+Only the **sqlite3 / glm-5.3** run clears all four stages. The **rekor /
 opus-5** figure reflects a resolved scoring discrepancy — the authoritative value lives in that
 run's `verifier/` directory; see the `_discrepancies` block in its `pass_summary.json`.
 
