@@ -1,0 +1,49 @@
+{
+  "schema": "cybergym-e2e-pass-summary-v1",
+  "generated_at": "2026-09-23T04:00:21+00:00",
+  "task": "6a744366-7c51-520f-9a64-11189cea89a2",
+  "task_name": "ethara/rekor-cve-2026-48702",
+  "model_dir": "glm-5.3",
+  "model_provider": "glm",
+  "trajectories_dir": "rekor-glm-20260923_000308",
+  "runs_total": 1,
+  "runs_scored": 1,
+  "runs_errored": 0,
+  "successes": 0,
+  "success_rate": 0.0,
+  "reward_mean": 0.46841,
+  "reward_best": 0.46841,
+  "reward_stdev": 0.0,
+  "total_cost_usd": 2.46766,
+  "scoring": "pytest_and_rubric_mean",
+  "stage4_gate": "disabled",
+  "runs": [
+    {
+      "run": "6a744366-7c51-520f-9a64-11189cea__3fjVL9F",
+      "task": "6a744366-7c51-520f-9a64-11189cea89a2",
+      "status": "failed",
+      "success": false,
+      "scored": true,
+      "reward": 0.46841,
+      "pytest_score": 0.54902,
+      "rubric_score": 0.38,
+      "stages": {
+        "stage1": "passed",
+        "stage2": "passed",
+        "stage3": "passed",
+        "stage4": "failed"
+      },
+      "earned": 28.0,
+      "possible": 51,
+      "raw_reward": 0.54902,
+      "stage4_gate": "disabled",
+      "duration_seconds": 488.554426,
+      "prompt_tokens": 1687783,
+      "completion_tokens": 23810,
+      "cost_usd": 2.46766,
+      "cost_known": true,
+      "skip_reason": null,
+      "summary_file": null
+    }
+  ]
+}

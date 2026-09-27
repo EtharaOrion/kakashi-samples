@@ -1,0 +1,53 @@
+{
+  "reward": 0.166492,
+  "pytest_score": 0.142857,
+  "rubric_score": 0.19,
+  "avg_score": 0.166492,
+  "scoring": "component_weighted_mean",
+  "skip_reason": null,
+  "stages_detail": {
+    "stage1": {
+      "status": "failed"
+    },
+    "stage2": {
+      "status": "failed"
+    },
+    "stage3": {
+      "status": "passed"
+    },
+    "stage4": {
+      "status": "failed"
+    }
+  },
+  "binary_stages": {
+    "stage1": false,
+    "stage2": false,
+    "stage3": true,
+    "stage4": false
+  },
+  "required_stages": [
+    "stage1",
+    "stage2",
+    "stage3",
+    "stage4"
+  ],
+  "skipped": false,
+  "raw_reward": 0.14285714285714285,
+  "earned": 4.0,
+  "possible": 28,
+  "_note": "reward is the COMBINED run score. avg_score 0.168831 = (pytest 0.142857 + rubric 0.194805)/2, computed 2026-09-23 to fill in the combined channel this run was missing. The deterministic half is 4/28 = 0.142857, recomputed from verifier/ctrf.json against tests/test_weights.json and equal to the 0.14285714285714285 this verifier originally recorded as its sole value (preserved as raw_reward). The rubric half is the existing rubric evaluation in verifier/rubric_score.json (15/77) - not re-evaluated. The same formula reproduces the sibling claude-opus-5 run's recorded 0.186688, confirming the method.",
+  "traj_tests": 0.142857,
+  "rubric_scored": true,
+  "ledger": {
+    "traj_tests": {
+      "status": "scored",
+      "weight": 3.5,
+      "value": 0.142857
+    },
+    "rubric": {
+      "status": "scored",
+      "weight": 3.519,
+      "value": 0.19
+    }
+  }
+}

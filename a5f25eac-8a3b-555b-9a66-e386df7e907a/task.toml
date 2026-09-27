@@ -1,0 +1,121 @@
+schema_version = "1.4"
+mode = "e2e"
+artifacts = ["/output/poc.bin", "/output/fix.patch"]
+
+[task]
+uuid_v5 = "a5f25eac-8a3b-555b-9a66-e386df7e907a"
+authors = [
+    { name = "Sagar Agrahari", email = "sagar.agrahari@ethara.ai" },
+    { name = "Pratham Shukla", email = "pratham.shukla@ethara.ai" },
+    { name = "Umang Kumar", email = "umang.kumar@ethara.ai" },
+    { name = "Panjak Kumar", email = "panjak.kumar1152@ethara.ai" },
+    { name = "Faiz Khan", email = "faiz.khan26@ethara.ai" },
+    { name = "Smriti Singh", email = "smriti.singh@ethara.ai" },
+    { name = "Madhushree Ray", email = "madhushree.ray1995@ethara.ai" },
+    { name = "Rajni Kant", email = "rajni.kant@ethara.ai" },
+    { name = "Krishna Kaushal", email = "krishna.Kaushal@ethara.ai" },
+]
+name = "ethara/sqlite3-cve-2024-0232"
+description = "Diagnose and patch a use-after-free defect in an embedded database engine's JSON extension [e2e]."
+version = "1.0.0"
+keywords = ["security", "c", "use-after-free", "memory-safety", "e2e"]
+
+[agent]
+network_mode = "no-network"
+timeout_sec = 5400
+workspace = "/root/workspace"
+
+[environment]
+dockerfile = "environment/Dockerfile"
+network_mode = "no-network"
+build_timeout_sec = 900.0
+
+[verifier]
+network_mode = "public"
+timeout_sec = 7200
+entrypoint = "tests/test.sh"
+reward_file = "/logs/verifier/reward.json"
+environment_mode = "separate"
+
+[verifier.env]
+OPENAI_API_KEY = "${OPENAI_API_KEY:-}"
+ANTHROPIC_API_KEY = "${ANTHROPIC_API_KEY:-}"
+GEMINI_API_KEY = "${GEMINI_API_KEY:-}"
+
+[verifier.weights]
+file = "tests/test_weights.json"
+normalize = "component_weighted_mean"
+clamp = [-1.0, 1.0]
+
+[rubric]
+file = "tests/rubric.json"
+channel_relation = "disjoint"
+compiled_linkage = "rubric item field deterministic_counterpart"
+
+[metadata]
+mode = "e2e"
+language = "c"
+task_id = "CVE-2024-0232"
+category = "Security"
+subcategory = "Vulnerability repair"
+family = "real-binary-reproducer"
+tags = ["cve", "e2e", "c", "use-after-free", "cwe-416", "sqlite3"]
+
+[leak_gate]
+private_carriers = ["solution/truth.md", "solution/fix.patch", "solution/poc.bin", "solution/crash.log", "tests/data/poc.bin", "TRUTH.md"]
+agent_visible_roots = ["environment", "instruction.md"]
+ngram_width = 8
+normalization = "casefold; collapse all runs of non-alphanumeric to a single space; strip leading and trailing space"
+containment_threshold = 0.30
+
+[rubric.item_schema]
+required_fields = ["number", "criterion", "is_positive", "type", "evaluation_target", "importance", "score", "compiled", "evidence"]
+optional_fields = ["deterministic_counterpart"]
+conditional_required = [["compiled", "deterministic_counterpart"]]
+number_pattern = "^R[0-9]+$"
+score_values = [-5, 1, 3, 5]
+evidence_must_resolve_to_committed_file = true
+
+[rubric.target_vocabulary]
+evaluation_target = ["final_answer", "state_change", "trajectory", "user_facing_message"]
+type = ["agent behavior", "factuality & hallucination", "safety & boundaries", "task completion", "tool use"]
+importance = ["critically_important", "important"]
+
+[rubric.compiled_weight]
+measure = "positive_weight_share"
+measured_at_signoff = 0.0
+absolute_weight_share = 0.0746
+floor_applicability = "not_applicable"
+floor_applicability_reason = "channel_relation is disjoint. The judged channel grades response content and run trajectory; the deterministic channel grades state change. A criterion about what a response asserted has no deterministic counterpart to compile into, so a share floor over this design measures the design rather than a defect. G-RUB-RESIDUE remains the live control and is not relaxed."
+
+[verifier.robustness]
+stability_trials = 2
+flakiness_trials = 2
+
+[leak_gate.carrier_exclusions]
+"tests/validate.py" = "Deliberately staged into the image as /opt/harness/validate.py. instruction.md tells the agent to call it, so it is shared by design and its containment against the agent surface is 1.0 by construction rather than by leak."
+"tests/test.sh" = "The verifier entrypoint. It is not copied into the image and the agent never sees it, but it also carries no answer content: it materialises a scorer and invokes pytest. Excluded because it is not answer-bearing, not because it is shared."
+"tests/test_output.py" = "The graded oracle. Not staged into the image. It encodes which relations are graded rather than the answer to them, and the withheld reproducer it reads lives in tests/data/poc.bin, which IS in the private set."
+"tests/rubric.json" = "The judged criteria. Criterion text describes what a correct answer must show, which is weaker than the answer; the answer itself lives in solution/truth.md, which IS in the private set."
+"solution/TRUTH.md" = "A case variant of solution/truth.md, which is already in the private set. On a case-insensitive filesystem the two resolve to one file."
+"tests/rubrics.json" = "Not committed by this bundle. The auditor default set names it for bundles that use the plural filename."
+"tests/test_weights.json" = "Test names and weights only, no answer content."
+"solution/solve.sh" = "Publishes the two artifacts to /output and nothing else; it carries no answer content of its own."
+
+[verifier.perturbations]
+line_order = true
+section_indentation = true
+suite_name_prefixes = true
+ordinal_suffixes = true
+timestamps = true
+interleaved_output = true
+
+[environment.image]
+built_platforms = ["linux/amd64", "linux/arm64"]
+base_digest_amd64 = "sha256:8b4a73d83374b298a0a771eeec9a1d44ceff3416a678b7d7946303389d022aca"
+base_digest_arm64 = "sha256:2edbbc5dc405e9612ba3584ce95480277e3eb374407b5505fe26f17df77c7dbc"
+built_image_digest_arm64 = "sha256:09a49f4b1a92b7e0eac87cc7e4c5af1b7df7bc6aecf6a6c3149d2dfbb7597a93"
+built_image_digest_amd64 = ""
+built_platform = "linux/arm64"
+built_from = "environment/Dockerfile at the pinned base digests"
+built_at = "2026-09-05"

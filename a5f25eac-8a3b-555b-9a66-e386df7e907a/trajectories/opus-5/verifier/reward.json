@@ -1,0 +1,49 @@
+{
+  "reward": 0.446986,
+  "pytest_score": 0.466667,
+  "rubric_score": 0.43,
+  "avg_score": 0.446986,
+  "scoring": "component_weighted_mean",
+  "skip_reason": null,
+  "stages_detail": {
+    "stage1": {
+      "status": "passed"
+    },
+    "stage2": {
+      "status": "passed"
+    },
+    "stage3": {
+      "status": "failed"
+    },
+    "stage4": {
+      "status": "failed"
+    }
+  },
+  "binary_stages": {
+    "stage1": true,
+    "stage2": true,
+    "stage3": false,
+    "stage4": false
+  },
+  "required_stages": [
+    "stage1",
+    "stage2",
+    "stage3",
+    "stage4"
+  ],
+  "skipped": false,
+  "traj_tests": 0.466667,
+  "rubric_scored": true,
+  "ledger": {
+    "traj_tests": {
+      "status": "scored",
+      "weight": 3.625,
+      "value": 0.466667
+    },
+    "rubric": {
+      "status": "scored",
+      "weight": 4.2,
+      "value": 0.43
+    }
+  }
+}

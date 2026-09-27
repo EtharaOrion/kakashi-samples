@@ -1,0 +1,35 @@
+{
+  "components": {
+    "traj_tests": {
+      "weight": 3.625,
+      "graded": true,
+      "test_file": "test_output.py",
+      "note": "Deterministic oracle. Weights 1/3/5 by severity, negatives subtract; component weight = mean of the absolute test weights (58/16 = 3.625). Channel value is the pytest score, with the reproducer gate and the decisive repaired floor applied by score.py in test.sh, then floored at 0 for the ledger.",
+      "tests": {
+        "test_sqlite3_patch_artifact_present": 1,
+        "test_sqlite3_patch_applies_to_pristine_tree": 1,
+        "test_sqlite3_patch_scope_limited_to_library": 1,
+        "test_agent_poc_neutralized_by_patch": 5,
+        "test_poc_artifact_present": 1,
+        "test_agent_poc_crashes_vuln_build": 5,
+        "test_project_suite_passes_with_patch": 3,
+        "test_ground_truth_poc_neutralized_by_patch": 5,
+        "test_sqlite3_patched_deep_chain_neutralized": 5,
+        "test_sqlite3_patched_extension_results_preserved": 3,
+        "test_sqlite3_negative_weight_empty_patch": -5,
+        "test_sqlite3_negative_weight_immutable_harness_edit": -5,
+        "test_sqlite3_negative_weight_sanitizer_suppressed": -5,
+        "test_sqlite3_negative_weight_extension_bypassed": -5,
+        "test_sqlite3_negative_weight_network_use": -3,
+        "test_sqlite3_negative_weight_poc_is_ground_truth_copy": -5
+      }
+    },
+    "rubric": {
+      "weight": 4.2,
+      "graded": true,
+      "file": "rubric.json",
+      "note": "LLM-judged semantic channel, scored by _judge/rubric_judge_cli.py over JUDGE_WIRE (openai | anthropic | gemini). component weight = mean of the absolute criterion scores in rubric.json (42/10 = 4.2). Channel value is rubric_breakdown.json 'score' = rc * (1 - rb). DROPPED from both sums when no judge key is configured or the judge fails, so the reward falls back to traj_tests alone."
+    }
+  },
+  "reward_rule": "reward = max(0, sum(component.weight * component.value) / sum(component.weight)) over graded components that produced a value, clamped to [-1, 1]. rubric share when both channels score = 4.2 / (3.625 + 4.2) = 0.5367."
+}

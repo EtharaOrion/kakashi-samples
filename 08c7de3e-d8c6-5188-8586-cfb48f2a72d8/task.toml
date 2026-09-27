@@ -1,0 +1,74 @@
+schema_version = "1.4"
+mode = "e2e"
+artifacts = ["/output/poc.bin", "/output/fix.patch"]
+
+[task]
+uuid_v5 = "08c7de3e-d8c6-5188-8586-cfb48f2a72d8"
+authors = [
+    { name = "Sagar Agrahari", email = "sagar.agrahari@ethara.ai" },
+    { name = "Pratham Shukla", email = "pratham.shukla@ethara.ai" },
+    { name = "Umang Kumar", email = "umang.kumar@ethara.ai" },
+    { name = "Panjak Kumar", email = "panjak.kumar1152@ethara.ai" },
+    { name = "Faiz Khan", email = "faiz.khan26@ethara.ai" },
+    { name = "Smriti Singh", email = "smriti.singh@ethara.ai" },
+    { name = "Madhushree Ray", email = "madhushree.ray1995@ethara.ai" },
+    { name = "Rajni Kant", email = "rajni.kant@ethara.ai" },
+    { name = "Krishna Kaushal", email = "krishna.Kaushal@ethara.ai" },
+]
+name = "ethara/pyjwt-cve-2026-32597"
+description = "Discover, reproduce and repair PyJWT accepting a token naming an unsupported critical header extension (CVE-2026-32597)."
+keywords = ["security", "python", "authentication", "input-validation"]
+
+[metadata]
+difficulty = "Expert"
+category = "Security"
+subcategory = "Vulnerability repair"
+family = "real-binary-reproducer"
+tags = ["cve", "e2e", "python", "improper-authentication", "rfc-7515", "pyjwt"]
+
+[verifier]
+network_mode = "public"
+timeout_sec = 900.0
+environment_mode = "separate"
+
+[verifier.env]
+OPENAI_API_KEY = "${OPENAI_API_KEY:-}"
+ANTHROPIC_API_KEY = "${ANTHROPIC_API_KEY:-}"
+GEMINI_API_KEY = "${GEMINI_API_KEY:-}"
+
+[verifier.weights]
+file = "tests/test_weights.json"
+normalize = "component_weighted_mean"
+clamp = [-1.0, 1.0]
+
+[rubric]
+file = "tests/rubric.json"
+channel_relation = "disjoint"
+
+[agent]
+network_mode = "no-network"
+timeout_sec = 5400.0
+
+[environment]
+build_timeout_sec = 900.0
+network_mode = "public"
+
+[leak_gate]
+private_carriers = ["TRUTH.md", "solution/TRUTH.md", "solution/fix.patch", "solution/poc.bin", "solution/crash.log", "tests/validate.py"]
+agent_visible_roots = ["environment", "instruction.md"]
+ngram_width = 8
+normalization = "casefold; collapse all runs of non-alphanumeric to a single space; strip leading and trailing space"
+containment_threshold = 0.30
+measured_worst_containment = 0.0629
+
+[leak_gate.carrier_exclusions]
+"tests/test.sh" = "The verifier entrypoint. Not copied into the image and never seen by the agent, but it carries no answer content: it runs the oracle and applies the gates."
+"tests/test_output.py" = "The graded oracle. Not staged. It encodes which relations are graded rather than the answer to them, and the withheld reproducer it reads lives in tests/validate.py, which IS in the private set."
+"tests/test_weights.json" = "Test names and weights only, no answer content."
+"tests/rubric.json" = "The judged criteria. Criterion text describes what a correct answer must show, which is weaker than the answer itself."
+"solution/solve.sh" = "Publishes the two artifacts to /output and nothing else; it carries no answer content of its own."
+"tests/data/poc.bin" = "Not committed by this bundle. The held-out reproducer is base64-embedded in tests/validate.py instead, which IS in the private set."
+
+[verifier.robustness]
+stability_trials = 2
+flakiness_trials = 2

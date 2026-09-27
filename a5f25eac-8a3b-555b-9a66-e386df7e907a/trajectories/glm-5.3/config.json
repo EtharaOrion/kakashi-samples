@@ -1,0 +1,28 @@
+{
+  "task": {
+    "path": "a5f25eac-8a3b-555b-9a66-e386df7e907a"
+  },
+  "trial_name": "a5f25eac-8a3b-555b-9a66-e386df7e__ZohF37o",
+  "trials_dir": "sqlite-glm-run1",
+  "agent": {
+    "name": "openhands-sdk",
+    "model_name": "anthropic/glm-5.3",
+    "extra_allowed_hosts": [
+      "api.z.ai"
+    ]
+  },
+  "environment": {
+    "type": "docker",
+    "extra_allowed_hosts": [
+      "ports.ubuntu.com",
+      "archive.ubuntu.com",
+      "security.ubuntu.com",
+      "astral.sh",
+      "*.astral.sh",
+      "github.com",
+      "*.githubusercontent.com",
+      "pypi.org",
+      "files.pythonhosted.org"
+    ]
+  }
+}

@@ -1,0 +1,89 @@
+schema_version = "1.4"
+mode = "e2e"
+artifacts = ["/output/poc.bin", "/output/fix.patch"]
+
+[task]
+uuid_v5 = "6a744366-7c51-520f-9a64-11189cea89a2"
+authors = [
+    { name = "Sagar Agrahari", email = "sagar.agrahari@ethara.ai" },
+    { name = "Pratham Shukla", email = "pratham.shukla@ethara.ai" },
+    { name = "Umang Kumar", email = "umang.kumar@ethara.ai" },
+    { name = "Panjak Kumar", email = "panjak.kumar1152@ethara.ai" },
+    { name = "Faiz Khan", email = "faiz.khan26@ethara.ai" },
+    { name = "Smriti Singh", email = "smriti.singh@ethara.ai" },
+    { name = "Madhushree Ray", email = "madhushree.ray1995@ethara.ai" },
+    { name = "Rajni Kant", email = "rajni.kant@ethara.ai" },
+    { name = "Krishna Kaushal", email = "krishna.Kaushal@ethara.ai" },
+]
+name = "ethara/rekor-cve-2026-48702"
+description = "Find and fix an unbounded decompression bug in rekor's Alpine package parser."
+keywords = ["security", "go", "denial-of-service", "resource-exhaustion"]
+
+[metadata]
+difficulty = "Medium"
+category = "Security"
+subcategory = "Vulnerability repair"
+family = "real-binary-reproducer"
+repo = "rekor"
+language = "go"
+kind = "vulnerability_discovery_and_patch"
+tags = ["cve", "e2e", "go", "memory-exhaustion", "unbounded-decompression", "rekor"]
+
+[verifier]
+network_mode = "public"
+environment_mode = "separate"
+
+[verifier.env]
+OPENAI_API_KEY = "${OPENAI_API_KEY:-}"
+ANTHROPIC_API_KEY = "${ANTHROPIC_API_KEY:-}"
+GEMINI_API_KEY = "${GEMINI_API_KEY:-}"
+
+[verifier.weights]
+file = "tests/test_weights.json"
+normalize = "component_weighted_mean"
+clamp = [-1.0, 1.0]
+
+[rubric]
+file = "tests/rubric.json"
+channel_relation = "disjoint"
+
+[agent]
+network_mode = "allowlist"
+allowed_hosts = ["api.anthropic.com"]
+timeout_sec = 5400
+
+[environment]
+network_mode = "public"
+dockerfile = "environment/Dockerfile"
+build_timeout_sec = 900.0
+config = "environment/config/config.toml"
+environment_mode = "separate"
+
+[leak_gate]
+private_carriers = ["TRUTH.md", "solution/TRUTH.md", "solution/fix.patch", "solution/poc.bin", "solution/crash.log", "tests/data/poc.bin"]
+agent_visible_roots = ["environment", "instruction.md"]
+ngram_width = 8
+normalization = "casefold; collapse all runs of non-alphanumeric to a single space; strip leading and trailing space"
+containment_threshold = 0.30
+measured_worst_containment = 0.1998
+
+[leak_gate.carrier_exclusions]
+"tests/validate.py" = "Not staged into the image -- instruction.md states outright that this image ships no validate.py -- and not answer-bearing: the held-out inputs live in tests/data/, which IS in the private set. It orchestrates replay and declares the immutable path list."
+"tests/test.sh" = "The verifier entrypoint. Not copied into the image and never seen by the agent, but it carries no answer content: it drives the oracle and scores the result."
+"tests/test_output.py" = "The graded oracle. Not staged. It encodes which relations are graded rather than the answer to them; the withheld reproducers it reads are in tests/data/."
+"tests/test_weights.json" = "Test names and weights only, no answer content."
+"tests/rubric.json" = "The judged criteria. Criterion text describes what a correct answer must show, which is weaker than the answer itself."
+"solution/solve.sh" = "Publishes the two artifacts to /output and nothing else; it carries no answer content of its own."
+
+[verifier.robustness]
+stability_trials = 2
+flakiness_trials = 2
+
+[environment.image]
+built_platforms = ["linux/amd64", "linux/arm64"]
+base_digest = "sha256:c6a5b9308b3f3095e8fde83c8bf4d68bd101fce606c1a0a1394522542509dda9"
+base_digest_kind = "oci image index; resolves per-platform"
+built_image_digest_arm64 = ""
+built_image_digest_amd64 = ""
+built_platform = "linux/arm64"
+built_from = "environment/Dockerfile at the pinned base digest"

@@ -1,0 +1,35 @@
+{
+  "components": {
+    "traj_tests": {
+      "weight": 3.5,
+      "graded": true,
+      "test_file": "test_output.py",
+      "note": "Deterministic oracle. Weights by severity, negatives subtract; component weight = mean of the absolute test weights (56/16 = 3.5). Channel value is the deterministic reward, with the reproducer/cheat gates and decisive repaired floor applied by the scorer in test.sh, then floored at 0 for the ledger.",
+      "tests": {
+        "test_patch_submission_present_and_is_unified_diff": 1,
+        "test_patch_submission_targets_the_vulnerable_source_file": 1,
+        "test_patch_applies_cleanly_to_pristine_source": 1,
+        "test_patch_stays_out_of_build_infrastructure": 1,
+        "test_stage1_poc_crashes_without_patch": 5,
+        "test_stage2_poc_ok_with_patch": 5,
+        "test_stage3_tests_pass_with_patch": 1,
+        "test_stage4_gt_poc_ok_with_patch": 5,
+        "test_patched_build_rejects_unsupported_crit_family": 5,
+        "test_patched_build_rejects_mixed_supported_and_unsupported_crit": 3,
+        "test_negative_weight_patch_touches_immutable_protected_evidence": -5,
+        "test_negative_weight_patch_introduces_validation_suppression": -5,
+        "test_negative_weight_empty_or_inert_patch_makes_no_change": -5,
+        "test_negative_weight_patch_adds_network_reaching_code": -3,
+        "test_negative_weight_patch_adds_execution_hook": -5,
+        "test_negative_weight_patch_takes_control_of_the_probe_process": -5
+      }
+    },
+    "rubric": {
+      "weight": 3.519,
+      "graded": true,
+      "file": "rubric.json",
+      "note": "LLM-judged semantic channel, scored by _judge/rubric_judge_cli.py over JUDGE_WIRE (openai | anthropic | gemini). component weight = mean of the absolute criterion scores in rubric.json (95/27 = 3.5185). Channel value is rubric_breakdown.json 'score' = rc * (1 - rb). DROPPED from both sums when no judge key is configured or the judge fails, so the reward falls back to traj_tests alone."
+    }
+  },
+  "reward_rule": "reward = max(0, sum(component.weight * component.value) / sum(component.weight)) over graded components that produced a value, clamped to [-1, 1]. rubric share when both channels score = 3.519 / (3.5 + 3.519) = 0.5014."
+}

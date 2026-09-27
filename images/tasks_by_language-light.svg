@@ -22,21 +22,21 @@
   <circle cx="1133.42" cy="497.50" r="5" fill="#0e8a78"/>
   <rect x="1163.73" y="446.00" width="18" height="18" rx="4" fill="#0e8a78"/>
   <text x="1189.73" y="462.00" text-anchor="start" font-family="Georgia, 'Iowan Old Style', 'Times New Roman', ui-serif, serif" font-size="30" font-weight="bold" fill="#0a1414">go</text>
-  <text x="1163.73" y="492.00" text-anchor="start" font-family="'JetBrains Mono','SF Mono','Berkeley Mono',ui-monospace,'Courier New',monospace" font-size="18" fill="#4a6560">42d756c8-abda-48ce-a4a1-5fc887d53386</text>
+  <text x="1163.73" y="492.00" text-anchor="start" font-family="'JetBrains Mono','SF Mono','Berkeley Mono',ui-monospace,'Courier New',monospace" font-size="18" fill="#4a6560">6a744366-7c51-520f-9a64-11189cea89a2</text>
   <text x="1163.73" y="520.00" text-anchor="start" font-family="'JetBrains Mono','SF Mono','Berkeley Mono',ui-monospace,'Courier New',monospace" font-size="19" fill="#4a6560">1 of 3 tasks</text>
   <path d="M 1085.79 855.00 A 330 330 0 0 1 514.21 855.00 L 635.46 785.00 A 190 190 0 0 0 964.54 785.00 Z" fill="#b9781f" stroke="#f3efe6" stroke-width="3"/>
   <line x1="800.00" y1="1028.00" x2="800.00" y2="1075.00" stroke="rgba(10,30,28,0.35)" stroke-width="2"/>
   <circle cx="800.00" cy="1075.00" r="5" fill="#b9781f"/>
   <rect x="800.00" y="1076.00" width="18" height="18" rx="4" fill="#b9781f"/>
   <text x="826.00" y="1092.00" text-anchor="start" font-family="Georgia, 'Iowan Old Style', 'Times New Roman', ui-serif, serif" font-size="30" font-weight="bold" fill="#0a1414">c</text>
-  <text x="800.00" y="1122.00" text-anchor="start" font-family="'JetBrains Mono','SF Mono','Berkeley Mono',ui-monospace,'Courier New',monospace" font-size="18" fill="#4a6560">6e02e468-4f80-4fa7-96aa-2c3b0db7c14e</text>
+  <text x="800.00" y="1122.00" text-anchor="start" font-family="'JetBrains Mono','SF Mono','Berkeley Mono',ui-monospace,'Courier New',monospace" font-size="18" fill="#4a6560">a5f25eac-8a3b-555b-9a66-e386df7e907a</text>
   <text x="800.00" y="1150.00" text-anchor="start" font-family="'JetBrains Mono','SF Mono','Berkeley Mono',ui-monospace,'Courier New',monospace" font-size="19" fill="#4a6560">1 of 3 tasks</text>
   <path d="M 514.21 855.00 A 330 330 0 0 1 800.00 360.00 L 800.00 500.00 A 190 190 0 0 0 635.46 785.00 Z" fill="#6a5acd" stroke="#f3efe6" stroke-width="3"/>
   <line x1="507.28" y1="521.00" x2="466.58" y2="497.50" stroke="rgba(10,30,28,0.35)" stroke-width="2"/>
   <circle cx="466.58" cy="497.50" r="5" fill="#6a5acd"/>
   <rect x="418.27" y="446.00" width="18" height="18" rx="4" fill="#6a5acd"/>
   <text x="410.27" y="462.00" text-anchor="end" font-family="Georgia, 'Iowan Old Style', 'Times New Roman', ui-serif, serif" font-size="30" font-weight="bold" fill="#0a1414">python</text>
-  <text x="436.27" y="492.00" text-anchor="end" font-family="'JetBrains Mono','SF Mono','Berkeley Mono',ui-monospace,'Courier New',monospace" font-size="18" fill="#4a6560">7658f933-e5ad-4ce1-b9fa-0e1d75badb0e</text>
+  <text x="436.27" y="492.00" text-anchor="end" font-family="'JetBrains Mono','SF Mono','Berkeley Mono',ui-monospace,'Courier New',monospace" font-size="18" fill="#4a6560">08c7de3e-d8c6-5188-8586-cfb48f2a72d8</text>
   <text x="436.27" y="520.00" text-anchor="end" font-family="'JetBrains Mono','SF Mono','Berkeley Mono',ui-monospace,'Courier New',monospace" font-size="19" fill="#4a6560">1 of 3 tasks</text>
   <circle cx="800" cy="690" r="184" fill="#f3efe6"/>
   <text x="800" y="708" text-anchor="middle" font-family="Georgia, 'Iowan Old Style', 'Times New Roman', ui-serif, serif" font-size="86" font-weight="bold" fill="#0a1414">3</text>

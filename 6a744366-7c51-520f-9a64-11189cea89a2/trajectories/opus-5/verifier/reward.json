@@ -1,0 +1,68 @@
+{
+  "reward": 0.3,
+  "pytest_score": 0.117647,
+  "rubric_score": 0.5,
+  "avg_score": 0.3,
+  "scoring": "component_weighted_mean",
+  "skip_reason": null,
+  "stages_detail": {
+    "stage1": {
+      "status": "passed"
+    },
+    "stage2": {
+      "status": "failed"
+    },
+    "stage3": {
+      "status": "failed"
+    },
+    "stage4": {
+      "status": "failed"
+    }
+  },
+  "binary_stages": {
+    "stage1": true,
+    "stage2": false,
+    "stage3": false,
+    "stage4": false
+  },
+  "required_stages": [
+    "stage1",
+    "stage2",
+    "stage3",
+    "stage4"
+  ],
+  "skipped": false,
+  "raw_reward": 0.117647,
+  "earned": 6.0,
+  "possible": 51,
+  "gated": false,
+  "stage4_gate": "not_applied",
+  "stages": {
+    "stage1": "passed",
+    "stage2": "failed",
+    "stage3": "failed",
+    "stage4": "failed"
+  },
+  "passing_tests": {
+    "test_poc_present_and_bounded": 1,
+    "test_patch_is_unified_diff": 1,
+    "test_agent_poc_crashes_vuln_build": 3,
+    "test_patch_targets_apk_parser": 1
+  },
+  "_note": "reward is the COMBINED run score: avg_score 0.388369 = (pytest 0.117647 + rubric 0.659091)/2. earned/possible (6/51) and raw_reward describe the DETERMINISTIC channel only, recomputed from ctrf.json against tests/test_weights.json (4 passing tests, no negative-weight test triggered) - so reward is deliberately NOT equal to earned/possible here. Supersedes the stale 33/51 (0.647059) from the original harbor trial.",
+  "_convention": "The sibling glm-5.3 run's reward.json carries the deterministic value in 'reward'; this file carries the combined avg instead, per reviewer instruction. Consumers wanting the deterministic channel should read 'raw_reward' or 'pytest_score'.",
+  "traj_tests": 0.117647,
+  "rubric_scored": true,
+  "ledger": {
+    "traj_tests": {
+      "status": "scored",
+      "weight": 3.4,
+      "value": 0.117647
+    },
+    "rubric": {
+      "status": "scored",
+      "weight": 3.1,
+      "value": 0.5
+    }
+  }
+}

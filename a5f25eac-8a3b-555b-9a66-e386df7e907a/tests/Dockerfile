@@ -1,0 +1,82 @@
+# syntax=docker/dockerfile:1
+#
+# Harbor VERIFIER environment for sqlite3 (OSS-Fuzz).
+# Mirrors environment/Dockerfile (oss-fuzz base-builder on amd64, ubuntu+clang-14
+# on arm64) so the pinned compile.sh the oracle checks is byte-identical and the
+# vulnerable target at /out/vulnerable/ossfuzz is prebuilt for the replay stages.
+#
+ARG TARGETARCH
+
+FROM --platform=linux/amd64 gcr.io/oss-fuzz-base/base-builder@sha256:8b4a73d83374b298a0a771eeec9a1d44ceff3416a678b7d7946303389d022aca AS base-amd64
+
+FROM ubuntu@sha256:2edbbc5dc405e9612ba3584ce95480277e3eb374407b5505fe26f17df77c7dbc AS base-arm64
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        ca-certificates clang libclang-common-14-dev llvm-14 \
+        python3 python3-pip \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN ln -sf /usr/lib/llvm-14/bin/llvm-symbolizer /usr/bin/llvm-symbolizer
+
+FROM base-${TARGETARCH}
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TARGET_SRC=/src/sqlite3 \
+    TARGET_OUT=/out \
+    WORKSPACE_ROOT=/root/workspace
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        tcl tcl-dev git patch make xxd diffutils ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# The build assets -- the pristine snapshot, /opt/harness/scripts and
+# config.toml -- travel inside validate.py as base64 constants, so tests/ keeps
+# to the canonical file set and this bundle needs no env/ directory. They are
+# written back out HERE, at image build time, each one checked against the
+# sha256 recorded beside it, so the bytes staged in this image are the same ones
+# environment/ stages for the agent and every prebuild below is unchanged.
+# install_validate_deps.sh is moved out of scripts/ so /opt/harness/scripts
+# holds exactly the five pinned harness scripts, as it does in the agent image.
+COPY validate.py /tests/validate.py
+RUN python3 /tests/validate.py --materialize \
+        --src-tgz /opt/harness/src.tgz \
+        --scripts-dir /opt/harness/scripts \
+        --config-dir /opt/harness \
+    && mv /opt/harness/scripts/install_validate_deps.sh \
+          /opt/harness/install_validate_deps.sh \
+    && bash /opt/harness/install_validate_deps.sh \
+    && chmod +x /opt/harness/install_validate_deps.sh
+RUN mkdir -p /opt/harness && printf '%s' 'IyEvdXNyL2Jpbi9lbnYgcHl0aG9uMwoiIiJUaGUganVkZ2U6IGRlY2lkZSB3aGV0aGVyIG9uZSBpbnB1dCBmYXVsdHMgYSBzdGFnZWQgYnVpbGQgb2YgdGhlIGxpYnJhcnkuCgpgY3Jhc2hgIG1lYW5zIHRoZSBzYW5pdGl6ZXIgcmVwb3J0ZWQgYSBtZW1vcnkgZXJyb3IgYW5kIHRoZSBwcm9jZXNzIGFib3J0ZWQuCmBjbGVhbmAgbWVhbnMgdGhlIHN0YXRlbWVudCByYW4gdG8gY29tcGxldGlvbiBpbnNpZGUgdGhlIGJ1aWxkJ3Mgb3duIGxpbWl0cy4KYHRpbWVvdXRgIG1lYW5zIHRoZSBydW4gZGlkIG5vdCBmaW5pc2gsIHdoaWNoIGlzIG5laXRoZXIgb2YgdGhlIGFib3ZlIGFuZCBpcwpuZXZlciBzY29yZWQgYXMgYSByZXBhaXIuCgpUaGUgdmVyZGljdCByZWNvcmQgY2FycmllcyB0aGUgc2FuaXRpemVyJ3Mgb3duIGJ1ZyBsYWJlbCBhbmQgdGhlIGlubmVybW9zdApmcmFtZSBpdCBuYW1lZCwgc28gYSBncmFkZWQgcnVuIGFuZCBhIHJ1biB0aGUgYWdlbnQgcGVyZm9ybWVkIGJ5IGhhbmQgY2Fubm90CmRpc2FncmVlIGFib3V0IHdoYXQgaGFwcGVuZWQuCiIiIgppbXBvcnQgYXJncGFyc2UKaW1wb3J0IGpzb24KaW1wb3J0IG9zCmltcG9ydCByZQppbXBvcnQgc3VicHJvY2VzcwppbXBvcnQgc3lzCgpTQU5fRVJST1IgPSByZS5jb21waWxlKAogICAgciJFUlJPUjpccyooPzpBZGRyZXNzfExlYWt8TWVtb3J5fFRocmVhZHxVbmRlZmluZWRCZWhhdmlvcilTYW5pdGl6ZXI6XHMqIgogICAgciIoW0EtWmEtejAtOV8tXSspIikKIyBEZWxpYmVyYXRlbHkgbm90IGFuY2hvcmVkIHRvIHRoZSBzdGFydCBvZiB0aGUgbGluZS4gQSBydW5uZXIgdGhhdCBwcmVmaXhlcyBlYWNoCiMgbGluZSwgd2l0aCBhIHRpbWVzdGFtcCBvciBhIHN0cmVhbSB0YWcsIHdvdWxkIG90aGVyd2lzZSBoaWRlIHRoZSBmcmFtZSBhbmQgbGVhdmUKIyBjcmFzaF9mdW5jdGlvbiBudWxsIG9uIGEgcnVuIHRoYXQgZGlkIHJlcG9ydCBvbmUuIFRoZSB2ZXJkaWN0IGl0c2VsZiBuZXZlcgojIGRlcGVuZGVkIG9uIHRoaXMgcGF0dGVybiwgYnV0IHRoZSByZWNvcmQgaXQgcHJpbnRzIGlzIHJlYWQgYnkgaHVtYW5zIHJlc29sdmluZyBhCiMgc2NvcmluZyBkaXNwdXRlLCBzbyBpdCBoYXMgdG8gc3Vydml2ZSBhIHByZWZpeGVkIGxvZy4KRlJBTUVfWkVSTyA9IHJlLmNvbXBpbGUociIjMFxzKzB4WzAtOWEtZl0rXHMraW5ccysoW0EtWmEtel9dW0EtWmEtejAtOV9dKikiKQpERUZBVUxUX1RJTUVPVVQgPSAxMjAKCgpkZWYgdmFsaWRhdGUodGFyZ2V0LCBpbnB1dF9wYXRoLCB0aW1lb3V0PURFRkFVTFRfVElNRU9VVCk6CiAgICAiIiJSdW4gb25lIGlucHV0IHRocm91Z2ggYHRhcmdldGAgYW5kIGNsYXNzaWZ5IHdoYXQgY2FtZSBiYWNrLiIiIgogICAgZW52ID0gZGljdChvcy5lbnZpcm9uKQogICAgIyBMZWFrIGFjY291bnRpbmcgb25seTsgbm90aGluZyBoZXJlIGNoYW5nZXMgd2hldGhlciBhIG1lbW9yeSBlcnJvciBpcwogICAgIyByZXBvcnRlZCBvciB3aGF0IGV4aXQgY29kZSBpdCBwcm9kdWNlcy4KICAgIGVudlsiQVNBTl9PUFRJT05TIl0gPSAiZGV0ZWN0X2xlYWtzPTAiCiAgICB0cnk6CiAgICAgICAgcHJvYyA9IHN1YnByb2Nlc3MucnVuKFt0YXJnZXQsICItcnVucz0xIiwgaW5wdXRfcGF0aF0sCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGNhcHR1cmVfb3V0cHV0PVRydWUsIHRleHQ9VHJ1ZSwKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgdGltZW91dD10aW1lb3V0LCBlbnY9ZW52KQogICAgICAgIG91dHB1dCA9IChwcm9jLnN0ZG91dCBvciAiIikgKyAocHJvYy5zdGRlcnIgb3IgIiIpCiAgICAgICAgZXhpdF9jb2RlLCB0aW1lZF9vdXQgPSBwcm9jLnJldHVybmNvZGUsIEZhbHNlCiAgICBleGNlcHQgc3VicHJvY2Vzcy5UaW1lb3V0RXhwaXJlZCBhcyBleHBpcmVkOgogICAgICAgIG91dHB1dCA9ICIiLmpvaW4oCiAgICAgICAgICAgIHN0cmVhbS5kZWNvZGUoInV0Zi04IiwgInJlcGxhY2UiKSBpZiBpc2luc3RhbmNlKHN0cmVhbSwgYnl0ZXMpCiAgICAgICAgICAgIGVsc2UgKHN0cmVhbSBvciAiIikKICAgICAgICAgICAgZm9yIHN0cmVhbSBpbiAoZXhwaXJlZC5zdGRvdXQsIGV4cGlyZWQuc3RkZXJyKSkKICAgICAgICBleGl0X2NvZGUsIHRpbWVkX291dCA9IE5vbmUsIFRydWUKICAgIGV4Y2VwdCBPU0Vycm9yIGFzIGVycjoKICAgICAgICByZXR1cm4geyJ2ZXJkaWN0IjogImVycm9yIiwgImJ1Z190eXBlIjogTm9uZSwgImNyYXNoX2Z1bmN0aW9uIjogTm9uZSwKICAgICAgICAgICAgICAgICJleGl0X2NvZGUiOiBOb25lLCAidGFyZ2V0IjogdGFyZ2V0LCAiaW5wdXQiOiBpbnB1dF9wYXRoLAogICAgICAgICAgICAgICAgImRldGFpbCI6IHN0cihlcnIpfQoKICAgIGVycm9yID0gU0FOX0VSUk9SLnNlYXJjaChvdXRwdXQpCiAgICBmcmFtZSA9IEZSQU1FX1pFUk8uc2VhcmNoKG91dHB1dCkKICAgIGlmIHRpbWVkX291dDoKICAgICAgICB2ZXJkaWN0ID0gInRpbWVvdXQiCiAgICBlbGlmIGVycm9yOgogICAgICAgIHZlcmRpY3QgPSAiY3Jhc2giCiAgICBlbHNlOgogICAgICAgIHZlcmRpY3QgPSAiY2xlYW4iCiAgICByZXR1cm4gewogICAgICAgICJ2ZXJkaWN0IjogdmVyZGljdCwKICAgICAgICAiYnVnX3R5cGUiOiBlcnJvci5ncm91cCgxKSBpZiBlcnJvciBlbHNlIE5vbmUsCiAgICAgICAgImNyYXNoX2Z1bmN0aW9uIjogZnJhbWUuZ3JvdXAoMSkgaWYgZnJhbWUgZWxzZSBOb25lLAogICAgICAgICJleGl0X2NvZGUiOiBleGl0X2NvZGUsCiAgICAgICAgInRhcmdldCI6IHRhcmdldCwKICAgICAgICAiaW5wdXQiOiBpbnB1dF9wYXRoLAogICAgfQoKCmRlZiBtYWluKCk6CiAgICBwYXJzZXIgPSBhcmdwYXJzZS5Bcmd1bWVudFBhcnNlcigKICAgICAgICBkZXNjcmlwdGlvbj0iUnVuIG9uZSBpbnB1dCBhZ2FpbnN0IGEgc3RhZ2VkIGJ1aWxkIGFuZCByZXBvcnQgYSB2ZXJkaWN0IikKICAgIHBhcnNlci5hZGRfYXJndW1lbnQoIi0tdGFyZ2V0IiwgcmVxdWlyZWQ9VHJ1ZSwgaGVscD0ic3RhZ2VkIGVudHJ5IHBvaW50IikKICAgIHBhcnNlci5hZGRfYXJndW1lbnQoIi0taW5wdXQiLCByZXF1aXJlZD1UcnVlLCBoZWxwPSJwYXRoIHRvIHRoZSBpbnB1dCBmaWxlIikKICAgIHBhcnNlci5hZGRfYXJndW1lbnQoIi0tdGltZW91dCIsIHR5cGU9ZmxvYXQsIGRlZmF1bHQ9REVGQVVMVF9USU1FT1VULAogICAgICAgICAgICAgICAgICAgICAgICBoZWxwPSJzZWNvbmRzIGJlZm9yZSB0aGUgcnVuIGlzIGNhbGxlZCBhIHRpbWVvdXQiKQogICAgcGFyc2VyLmFkZF9hcmd1bWVudCgiLS1leHBlY3QiLCBjaG9pY2VzPVsiY3Jhc2giLCAiY2xlYW4iLCAidGltZW91dCJdLAogICAgICAgICAgICAgICAgICAgICAgICBoZWxwPSJleGl0IG5vbi16ZXJvIHVubGVzcyB0aGUgdmVyZGljdCBtYXRjaGVzIikKICAgIHBhcnNlci5hZGRfYXJndW1lbnQoIi0tcXVpZXQiLCBhY3Rpb249InN0b3JlX3RydWUiKQogICAgYXJncyA9IHBhcnNlci5wYXJzZV9hcmdzKCkKCiAgICByZXN1bHQgPSB2YWxpZGF0ZShhcmdzLnRhcmdldCwgYXJncy5pbnB1dCwgYXJncy50aW1lb3V0KQogICAgcHJpbnQocmVzdWx0WyJ2ZXJkaWN0Il0gaWYgYXJncy5xdWlldCBlbHNlIGpzb24uZHVtcHMocmVzdWx0LCBpbmRlbnQ9MikpCiAgICBpZiBhcmdzLmV4cGVjdDoKICAgICAgICBzeXMuZXhpdCgwIGlmIHJlc3VsdFsidmVyZGljdCJdID09IGFyZ3MuZXhwZWN0IGVsc2UgMSkKCgppZiBfX25hbWVfXyA9PSAiX19tYWluX18iOgogICAgbWFpbigpCg==' | base64 -d > /opt/harness/validate.py
+
+RUN chmod +x /opt/harness/scripts/* \
+    && ln -sf /opt/harness/scripts/compile.sh  /usr/local/bin/build.sh \
+    && ln -sf /opt/harness/scripts/run_poc.sh  /usr/local/bin/run_poc.sh \
+    && ln -sf /opt/harness/scripts/test.sh     /usr/local/bin/regression.sh \
+    && ln -sf /opt/harness/scripts/mkpatch.sh  /usr/local/bin/mkpatch.sh
+
+RUN mkdir -p /output /logs/verifier /root/workspace
+
+WORKDIR /src
+
+RUN bash /opt/harness/scripts/prepare.sh
+RUN bash /opt/harness/scripts/compile.sh vulnerable
+
+# --------------------------------------------------------------------------- #
+# Verifier layer.  [verifier].environment_mode = "separate" grades in a
+# dedicated container Harbor builds from this tests/ directory, so the image
+# must own /tests.  Built on the SAME base + toolchain as environment/Dockerfile
+# (its build assets are vendored under tests/env/) so a submission is graded
+# under the toolchain it was produced against.  Only /logs/verifier and the
+# submitted /output artifacts arrive at grade time.
+# --------------------------------------------------------------------------- #
+RUN mkdir -p /output /logs/verifier /tests
+COPY . /tests
+# The rubric judge and its optional compressor travel in tests/_judge/ and are
+# staged by the COPY above at /tests/_judge/; test.sh invokes them by that
+# relative path. They use only the Python standard library (urllib over the
+# HTTPS endpoint), so no new packages are installed; ca-certificates is already
+# present on both base legs. JUDGE_WIRE + the API key arrive from
+# [verifier.env]/Harbor at grade time; with no key the rubric channel is left
+# unscored and the reward falls back to the deterministic channel alone.
+ENV GRADER_HEADROOM_ENABLED=false
+RUN chmod +x /tests/test.sh
+WORKDIR /
