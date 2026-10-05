@@ -164,9 +164,9 @@ def _changed_lines(patch_path):
 def vuln_probe():
     # build the unpatched tree once and replay the AGENT's PoC against it
     if not _env_ready():
-        pytest.skip("task image not present; cannot build the unpatched tree")
+        pytest.fail("task image not present; cannot build the unpatched tree")
     if not AGENT_POC.exists():
-        pytest.skip(f"no PoC submitted at {AGENT_POC}; nothing to reproduce")
+        pytest.fail(f"no PoC submitted at {AGENT_POC}; nothing to reproduce")
     _restore()
     build = _compile()
     res = _probe(AGENT_POC)
@@ -181,9 +181,9 @@ def vuln_probe():
 def patched_env():
     # build the AGENT's patched tree once and run every efficacy probe on it
     if not _env_ready():
-        pytest.skip("task image not present; cannot build the patched tree")
+        pytest.fail("task image not present; cannot build the patched tree")
     if not PATCH_PATH.exists():
-        pytest.skip(f"no patch submitted at {PATCH_PATH}; no patched tree to grade")
+        pytest.fail(f"no patch submitted at {PATCH_PATH}; no patched tree to grade")
     unbuilt = {
         "applied": False, "build_ok": False, "agent_rc": None, "gt_rc": None,
         "benign_rc": None, "benign_out": "", "control_rc": None,
@@ -284,7 +284,7 @@ def test_failure_dedup_token_matches_target(vuln_probe):
 # patch shape
 def test_patch_applies_cleanly():
     if not _env_ready():
-        pytest.skip("task image not present; cannot check the patch against source")
+        pytest.fail("task image not present; cannot check the patch against source")
     assert PATCH_PATH.exists(), f"no patch submitted at {PATCH_PATH}"
     rc = _patch_check()
     assert rc == 0, f"patch does not apply cleanly to a fresh tree (rc {rc})"
@@ -300,9 +300,9 @@ def test_patch_targets_apk_parser():
 
 # fix efficacy
 def _require_benign_ok(patched_env):
-    # skip unless the patched build still accepts the well formed baseline package
+    
     if patched_env["benign_rc"] != HANDLED or "accepted input" not in patched_env["benign_out"]:
-        pytest.skip(
+        pytest.fail(
             f"patched parser rejects the baseline package (verdict {patched_env['benign_rc']})"
         )
 
@@ -361,7 +361,7 @@ def test_benign_package_still_parses(patched_env):
 def test_project_suite_passes_with_patch(patched_env):
     assert patched_env["build_ok"], "no patched build to run the project suite on"
     if "no Go files" in patched_env["suite"] or "no such file" in patched_env["suite"]:
-        pytest.skip("project test target is not wired in this build")
+        pytest.fail("project test target is not wired in this build")
     assert patched_env["suite_rc"] == 0, (
         f"project suite failed after the patch (exit {patched_env['suite_rc']})"
     )
