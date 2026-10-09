@@ -116,4 +116,4 @@ MIT. See `LICENSE`. Each submodule carries its own license, and every bundle rec
 
 ## Contact
 
-Ethara.AI on GitHub at [EtharaOrion](https://github.com/EtharaOrion) and [Ethara-Ai](https://github.com/Ethara-Ai). Report a leaked task byte, a contamination path, or a gameable shortcut privately to security@ethara.ai rather than in a public issue. Contributions follow the measured-never-claimed directive in the governance contracts, with `requirements/` and `touchstones/` remaining human-write-only.
+Ethara.AI on GitHub at [EtharaOrion](https://github.com/EtharaOrion) and [Ethara-Ai](https://github.com/Ethara-Ai). Report a leaked task byte, a contamination path, or a gameable shortcut privately to security@ethara.ai rather than in a public issue, under the disclosure process in [SECURITY.md](SECURITY.md). Contributions follow the measured-never-claimed directive in the governance contracts, with `requirements/` and `touchstones/` remaining human-write-only, and [CONTRIBUTING.md](CONTRIBUTING.md) states how to open one.
